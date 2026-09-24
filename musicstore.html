@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Another Store — Music Store</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;font-family:'Segoe UI',Tahoma,sans-serif;background:#0a0515}
+
+/* ===== NEON PURPLE BACKGROUND ===== */
+.music-bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at 30% 80%,#2a0a4a 0%,#150525 40%,#0a0515 100%);overflow:hidden}
+.music-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 70% 20%,rgba(200,100,255,.08) 0%,transparent 50%)}
+
+/* Animated gradient mesh */
+.mesh{position:absolute;inset:0;opacity:.15;pointer-events:none}
+.mesh-orb{position:absolute;border-radius:50%;filter:blur(80px);animation:meshFloat 20s ease-in-out infinite}
+.mesh-orb:nth-child(1){width:400px;height:400px;left:10%;top:60%;background:#7b4cd9;animation-delay:0s}
+.mesh-orb:nth-child(2){width:300px;height:300px;right:20%;top:10%;background:#d94c8b;animation-delay:-7s}
+.mesh-orb:nth-child(3){width:250px;height:250px;left:50%;bottom:20%;background:#4c7bd9;animation-delay:-14s}
+@keyframes meshFloat{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(30px,-20px) scale(1.1)}50%{transform:translate(-20px,30px) scale(.9)}75%{transform:translate(20px,20px) scale(1.05)}}
+
+/* Grid lines */
+.grid-lines{position:absolute;inset:0;pointer-events:none;opacity:.04;background-image:linear-gradient(rgba(200,150,255,.5) 1px,transparent 1px),linear-gradient(90deg,rgba(200,150,255,.5) 1px,transparent 1px);background-size:60px 60px}
+
+/* ===== LAYOUT ===== */
+.music-container{position:relative;z-index:1;display:flex;height:100vh;width:100vw}
+
+/* ===== LEFT PANEL — NOW PLAYING ===== */
+.left-panel{flex:0 0 48%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;position:relative;overflow-y:auto}
+.left-panel::-webkit-scrollbar{width:4px}
+.left-panel::-webkit-scrollbar-thumb{background:rgba(200,150,255,.3);border-radius:2px}
+
+.now-playing{text-align:center;animation:npFadeIn .5s ease-out both;width:100%;max-width:360px}
+@keyframes npFadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* Vinyl record */
+.vinyl-wrap{position:relative;width:200px;height:200px;margin:0 auto 28px}
+.vinyl{width:200px;height:200px;border-radius:50%;position:relative;animation:vinylSpin 4s linear infinite;animation-play-state:paused}
+.vinyl.spinning{animation-play-state:running}
+@keyframes vinylSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.vinyl-disc{width:100%;height:100%;border-radius:50%;background:conic-gradient(from 0deg,#1a1a2e,#2a1a3e,#1a1a2e,#2a1a3e,#1a1a2e);box-shadow:0 0 40px rgba(120,60,200,.3),inset 0 0 30px rgba(0,0,0,.5);position:relative}
+.vinyl-disc::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#c79cff,#7b4cd9);box-shadow:0 0 20px rgba(200,150,255,.4)}
+.vinyl-disc::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:#0a0515}
+.vinyl-grooves{position:absolute;inset:15px;border-radius:50%;border:1px solid rgba(255,255,255,.03);box-shadow:inset 0 0 0 8px rgba(255,255,255,.02),inset 0 0 0 16px rgba(255,255,255,.015),inset 0 0 0 24px rgba(255,255,255,.01),inset 0 0 0 32px rgba(255,255,255,.008)}
+
+/* Track info */
+.track-title{font-size:26px;font-weight:700;color:#fff;text-shadow:0 0 20px rgba(200,150,255,.4);margin-bottom:4px}
+.track-artist{font-size:13px;color:rgba(200,180,255,.6);margin-bottom:16px;letter-spacing:.5px}
+.track-desc{font-size:13px;color:rgba(255,255,255,.7);max-width:320px;margin:0 auto 20px;line-height:1.55}
+
+/* Equalizer visualization */
+.equalizer{display:flex;align-items:end;justify-content:center;gap:3px;height:40px;margin:0 auto 20px}
+.eq-bar{width:4px;border-radius:2px;background:linear-gradient(to top,#7b4cd9,#c79cff);animation:eqBounce .6s ease-in-out infinite alternate;animation-play-state:paused}
+.eq-bar.active{animation-play-state:running}
+.eq-bar:nth-child(1){height:12px;animation-delay:0s}
+.eq-bar:nth-child(2){height:24px;animation-delay:.1s}
+.eq-bar:nth-child(3){height:18px;animation-delay:.2s}
+.eq-bar:nth-child(4){height:32px;animation-delay:.05s}
+.eq-bar:nth-child(5){height:14px;animation-delay:.15s}
+.eq-bar:nth-child(6){height:28px;animation-delay:.25s}
+.eq-bar:nth-child(7){height:20px;animation-delay:.08s}
+.eq-bar:nth-child(8){height:36px;animation-delay:.18s}
+.eq-bar:nth-child(9){height:16px;animation-delay:.12s}
+.eq-bar:nth-child(10){height:22px;animation-delay:.22s}
+.eq-bar:nth-child(11){height:30px;animation-delay:.03s}
+.eq-bar:nth-child(12){height:10px;animation-delay:.28s}
+@keyframes eqBounce{0%{height:4px;opacity:.4}100%{height:36px;opacity:1}}
+
+/* Details card */
+.track-details{text-align:left;max-width:320px;margin:0 auto 20px;padding:16px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(200,150,255,.15);backdrop-filter:blur(10px)}
+.track-details h4{font-size:10px;font-weight:700;color:rgba(200,180,255,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.track-details ul{list-style:none;margin-bottom:12px}
+.track-details ul li{font-size:12px;color:rgba(255,255,255,.7);padding:3px 0 3px 16px;position:relative;line-height:1.5}
+.track-details ul li::before{content:'♪';position:absolute;left:0;top:2px;color:#c79cff;font-size:10px}
+.track-details .req{font-size:11px;color:rgba(255,255,255,.45);line-height:1.5;padding-top:10px;border-top:1px solid rgba(200,150,255,.1)}
+.track-details .req strong{color:rgba(200,180,255,.7)}
+
+/* Play/Download button */
+.btn-play{display:inline-flex;align-items:center;gap:10px;padding:14px 36px;border-radius:30px;background:linear-gradient(135deg,#c79cff 0%,#7b4cd9 50%,#d94c8b 100%);border:none;color:#fff;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;box-shadow:0 4px 24px rgba(150,80,255,.4),0 0 60px rgba(200,100,255,.15);transition:transform .15s,box-shadow .15s;margin-right:8px}
+.btn-play:hover{transform:scale(1.05);box-shadow:0 6px 36px rgba(150,80,255,.6),0 0 80px rgba(200,100,255,.25)}
+.btn-play:active{transform:scale(.97)}
+.btn-play svg{width:18px;height:18px;fill:currentColor}
+
+.btn-download{display:inline-flex;align-items:center;gap:10px;padding:14px 36px;border-radius:30px;background:rgba(255,255,255,.1);border:1px solid rgba(200,150,255,.3);color:#fff;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;transition:transform .15s,background .15s}
+.btn-download:hover{transform:scale(1.05);background:rgba(255,255,255,.15)}
+.btn-download:active{transform:scale(.97)}
+.btn-download svg{width:18px;height:18px;fill:currentColor}
+
+/* ===== RIGHT PANEL — TRACKLIST ===== */
+.right-panel{flex:1;display:flex;flex-direction:column;padding:30px;background:linear-gradient(to right,transparent 0%,rgba(15,5,30,.5) 15%,rgba(15,5,30,.7) 100%)}
+.panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.panel-title{font-size:18px;font-weight:300;color:rgba(255,255,255,.85);letter-spacing:.5px}
+.back-link{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,.08);border:1px solid rgba(200,150,255,.2);color:rgba(200,180,255,.8);font-size:12px;font-weight:600;text-decoration:none;cursor:pointer;transition:background .2s}
+.back-link:hover{background:rgba(255,255,255,.15)}
+.back-link svg{width:14px;height:14px;fill:currentColor}
+
+/* Track list (not grid — like a playlist) */
+.tracklist{display:flex;flex-direction:column;gap:8px;overflow-y:auto;padding-right:8px;flex:1}
+.tracklist::-webkit-scrollbar{width:4px}
+.tracklist::-webkit-scrollbar-thumb{background:rgba(200,150,255,.3);border-radius:2px}
+
+.track-item{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(200,150,255,.08);cursor:pointer;transition:all .2s}
+.track-item:hover{background:rgba(200,150,255,.1);border-color:rgba(200,150,255,.2);transform:translateX(4px)}
+.track-item.active{background:rgba(200,150,255,.12);border-color:rgba(200,150,255,.3);box-shadow:0 0 20px rgba(150,80,255,.15)}
+.track-num{font-size:14px;font-weight:700;color:rgba(200,180,255,.4);min-width:24px;text-align:center}
+.track-item.active .track-num{color:#c79cff}
+.track-thumb{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.track-thumb::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(to bottom,rgba(255,255,255,.3) 0%,transparent 100%);pointer-events:none}
+.track-thumb svg{width:22px;height:22px;fill:#fff;position:relative;z-index:1}
+.track-info{flex:1;min-width:0}
+.track-info h3{font-size:13px;font-weight:600;color:#fff;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track-info p{font-size:11px;color:rgba(200,180,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track-dur{font-size:11px;color:rgba(200,180,255,.4);font-variant-numeric:tabular-nums}
+.track-item.active .track-dur{color:#c79cff}
+
+/* Mini equalizer on active track */
+.mini-eq{display:flex;align-items:end;gap:2px;height:14px}
+.mini-eq span{width:3px;border-radius:1px;background:#c79cff;animation:eqBounce .5s ease-in-out infinite alternate}
+.mini-eq span:nth-child(1){height:6px;animation-delay:0s}
+.mini-eq span:nth-child(2){height:12px;animation-delay:.15s}
+.mini-eq span:nth-child(3){height:8px;animation-delay:.3s}
+
+/* Icon colors */
+.icon-purple{background:linear-gradient(135deg,#c79cff,#7b4cd9)}
+.icon-pink{background:linear-gradient(135deg,#ff9ecd,#d94c8b)}
+
+/* ===== BOTTOM BAR ===== */
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;height:56px;z-index:10;background:linear-gradient(to top,rgba(10,5,21,.95) 0%,rgba(10,5,21,.7) 70%,transparent 100%);display:flex;align-items:center;justify-content:space-between;padding:0 40px}
+.bottom-left{display:flex;align-items:center;gap:20px}
+.music-logo{font-size:20px;font-weight:700;color:#fff;font-style:italic;background:linear-gradient(90deg,#c79cff,#d94c8b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.bottom-time{font-size:13px;color:rgba(200,180,255,.5);font-variant-numeric:tabular-nums}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+.music-container{flex-direction:column}
+.left-panel{flex:0 0 auto;padding:20px;min-height:320px}
+.vinyl-wrap{width:140px;height:140px}
+.vinyl{width:140px;height:140px}
+.track-title{font-size:20px}
+.right-panel{flex:1;padding:20px}
+.equalizer{height:28px}
+.btn-play,.btn-download{padding:12px 24px;font-size:13px}
+}
+</style>
+</head>
+<body>
+<div class="music-bg">
+<div class="mesh"><div class="mesh-orb"></div><div class="mesh-orb"></div><div class="mesh-orb"></div></div>
+<div class="grid-lines"></div>
+</div>
+
+<!-- Audio elements for each track -->
+<audio id="audio-sunlight" loop preload="auto"><source src="Music/Sunlight_In_The_Lobby.mp3" type="audio/mpeg"></audio>
+<audio id="audio-morning" loop preload="auto"><source src="Music/Morning_in_the_Lobby.mp3" type="audio/mpeg"></audio>
+<audio id="audio-shop" loop preload="auto"><source src="Music/Another Shop Theme.mp3" type="audio/mpeg"></audio>
+<audio id="audio-appstore" loop preload="auto"><source src="Music/Another Appstore Theme.mp3" type="audio/mpeg"></audio>
+
+<div class="music-container">
+<!-- LEFT: Now Playing -->
+<div class="left-panel">
+<div class="now-playing" id="nowPlaying">
+<div class="vinyl-wrap">
+<div class="vinyl" id="vinyl">
+<div class="vinyl-disc"><div class="vinyl-grooves"></div></div>
+</div>
+</div>
+<h1 class="track-title" id="trackTitle">Shop Theme</h1>
+<p class="track-artist" id="trackArtist">Another Store · Original Soundtrack</p>
+<div class="equalizer" id="equalizer">
+<div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+<div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+<div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
+</div>
+<p class="track-desc" id="trackDesc">La banda sonora oficial.</p>
+<div class="track-details" id="trackDetails"></div>
+<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+<button class="btn-play" id="btnPlay" type="button">
+<svg viewBox="0 0 24 24" id="playIcon"><path d="M8 5v14l11-7z"/></svg>
+<span id="playLabel">Reproducir</span>
+</button>
+<a class="btn-download" id="btnDownload" href="#" target="_blank" rel="noopener noreferrer">
+<svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+Descargar
+</a>
+<a class="btn-download" id="btnDrive" href="#" target="_blank" rel="noopener noreferrer" style="background:linear-gradient(to bottom,#ffd97a 0%,#e08c1e 100%);border-color:rgba(255,255,255,.2)">
+<svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+Drive (todas)
+</a>
+</div>
+</div>
+</div>
+
+<!-- RIGHT: Tracklist -->
+<div class="right-panel">
+<div class="panel-header">
+<div style="display:flex;align-items:center;gap:12px">
+<a class="back-link" href="index.html"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>Volver</a>
+<span class="panel-title">♫ Tracklist</span>
+</div>
+</div>
+<div class="tracklist" id="tracklist"></div>
+</div>
+</div>
+
+<div class="bottom-bar">
+<div class="bottom-left">
+<span class="music-logo">Music Store</span>
+<span class="bottom-time" id="clock">12:00 PM</span>
+</div>
+</div>
+
+<script>
+(function(){
+var tracks=[
+{id:'sunlight',name:'Sunlight In The Lobby',icon:'amber',dur:'—',audioId:'audio-sunlight',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>',
+desc:'Luz cálida de mañana en el lobby. Melodía suave y acogedora que da la bienvenida a Another Store.',
+features:['Loop infinito seamless','Estilo ambient / lounge','Composición original 2026','Formato MP3'],
+req:'Cualquier reproductor de audio. Windows, macOS, Linux, Android, iOS.',
+downloadUrl:'https://drive.google.com/drive/folders/1ugiv_jZ-w7x6GJ0EJalAc_nQMbgrMBnz?usp=sharing',driveUrl:'https://drive.google.com/drive/folders/1ugiv_jZ-w7x6GJ0EJalAc_nQMbgrMBnz?usp=sharing'},
+{id:'morning',name:'Morning In The Lobby',icon:'cyan',dur:'—',audioId:'audio-morning',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>',
+desc:'La calma de la mañana en el lobby. Tema usado también en la tienda de Fun UI Kits.',
+features:['Loop infinito seamless','Estilo ambient / chill','Composición original 2026','Formato MP3'],
+req:'Cualquier reproductor de audio.',
+downloadUrl:'https://drive.google.com/drive/folders/1ugiv_jZ-w7x6GJ0EJalAc_nQMbgrMBnz?usp=sharing',driveUrl:'https://drive.google.com/drive/folders/1ugiv_jZ-w7x6GJ0EJalAc_nQMbgrMBnz?usp=sharing'},
+{id:'shop',name:'Shop Theme',icon:'purple',dur:'2:34',audioId:'audio-shop',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>',
+desc:'La banda sonora oficial de Another Store. Melodía alegre con sintetizadores retro y pads ambientales.',
+features:['Loop infinito seamless','Estilo Frutiger Aero / synthpop','Composición original 2026','Formato MP3 320kbps'],
+req:'Cualquier reproductor de audio. Windows, macOS, Linux, Android, iOS.',
+downloadUrl:'https://drive.google.com/drive/folders/1ugiv_jZ-w7x6GJ0EJalAc_nQMbgrMBnz?usp=sharing',driveUrl:'https://drive.google.com/drive/folders/1ugiv_jZ-w7x6GJ0EJalAc_nQMbgrMBnz?usp=sharing'},
+{id:'appstore',name:'Appstore Theme',icon:'pink',dur:'3:12',audioId:'audio-appstore',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>',
+desc:'El tema del App Store estilo Wii. Ondas sonoras que evocan nostalgia y exploración digital.',
+features:['Loop infinito seamless','Estilo Wii Menu / ambient','Composición original 2026','Formato MP3 320kbps'],
+req:'Cualquier reproductor de audio.',
+downloadUrl:'https://drive.google.com/drive/folders/1ugiv_jZ-w7x6GJ0EJalAc_nQMbgrMBnz?usp=sharing',driveUrl:'https://drive.google.com/drive/folders/1ugiv_jZ-w7x6GJ0EJalAc_nQMbgrMBnz?usp=sharing'}
+];
+
+var tracklist=document.getElementById('tracklist'),vinyl=document.getElementById('vinyl'),
+trackTitle=document.getElementById('trackTitle'),trackArtist=document.getElementById('trackArtist'),
+trackDesc=document.getElementById('trackDesc'),trackDetails=document.getElementById('trackDetails'),
+btnPlay=document.getElementById('btnPlay'),playIcon=document.getElementById('playIcon'),
+playLabel=document.getElementById('playLabel'),equalizer=document.getElementById('equalizer'),
+btnDownload=document.getElementById('btnDownload'),
+selectedId='sunlight',isPlaying=false,currentAudio=null;
+
+function getIconClass(c){return 'icon-'+c}
+
+// Build tracklist
+tracks.forEach(function(t,i){
+var item=document.createElement('div');
+item.className='track-item'+(t.id===selectedId?' active':'');
+item.setAttribute('data-id',t.id);
+item.innerHTML=
+'<span class="track-num">'+(i+1)+'</span>'+
+'<div class="track-thumb '+getIconClass(t.icon)+'">'+t.iconSvg+'</div>'+
+'<div class="track-info"><h3>'+t.name+'</h3><p>Another Store · OST</p></div>'+
+'<span class="track-dur">'+t.dur+'</span>';
+item.addEventListener('click',function(){selectTrack(t.id)});
+tracklist.appendChild(item);
+});
+
+function selectTrack(id){
+selectedId=id;
+var t=tracks.find(function(a){return a.id===id});if(!t)return;
+
+// Stop current audio if playing
+if(currentAudio&&isPlaying){
+currentAudio.pause();
+currentAudio.currentTime=0;
+}
+
+// Update tracklist active state
+document.querySelectorAll('.track-item').forEach(function(el){
+var isActive=el.getAttribute('data-id')===id;
+el.classList.toggle('active',isActive);
+var durEl=el.querySelector('.track-dur');
+if(isActive&&isPlaying){
+durEl.innerHTML='<div class="mini-eq"><span></span><span></span><span></span></div>';
+}else{
+durEl.textContent=t.dur;
+}
+});
+
+// Animate now playing
+var np=document.getElementById('nowPlaying');
+np.style.animation='none';np.offsetHeight;
+np.style.animation='npFadeIn .5s ease-out both';
+
+trackTitle.textContent=t.name;
+trackArtist.textContent='Another Store · Original Soundtrack';
+trackDesc.textContent=t.desc;
+
+var html='<h4>Detalles</h4><ul>';
+t.features.forEach(function(f){html+='<li>'+f+'</li>'});
+html+='</ul><div class="req"><strong>Requisitos:</strong> '+t.req+'</div>';
+trackDetails.innerHTML=html;
+
+// Set download links
+btnDownload.href=t.downloadUrl;
+var btnDrive=document.getElementById('btnDrive');
+if(btnDrive){btnDrive.href=t.driveUrl||'#';btnDrive.style.display=t.driveUrl?'inline-flex':'none'}
+
+// Get new audio element
+currentAudio=document.getElementById(t.audioId);
+currentAudio.volume=0.4;
+
+// Reset play state
+isPlaying=false;
+updatePlayState();
+}
+
+function updatePlayState(){
+if(isPlaying){
+vinyl.classList.add('spinning');
+equalizer.querySelectorAll('.eq-bar').forEach(function(b){b.classList.add('active')});
+playIcon.innerHTML='<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+playLabel.textContent='Pausar';
+}else{
+vinyl.classList.remove('spinning');
+equalizer.querySelectorAll('.eq-bar').forEach(function(b){b.classList.remove('active')});
+playIcon.innerHTML='<path d="M8 5v14l11-7z"/>';
+playLabel.textContent='Reproducir';
+}
+// Update mini-eq in tracklist
+document.querySelectorAll('.track-item').forEach(function(el){
+var durEl=el.querySelector('.track-dur');
+var t=tracks.find(function(a){return a.id===el.getAttribute('data-id')});
+if(el.classList.contains('active')&&isPlaying){
+durEl.innerHTML='<div class="mini-eq"><span></span><span></span><span></span></div>';
+}else if(t){
+durEl.textContent=t.dur;
+}
+});
+}
+
+// Handle hash
+var hash=window.location.hash.replace('#','');
+if(hash&&tracks.find(function(t){return t.id===hash}))selectedId=hash;
+selectTrack(selectedId);
+
+// Clock — loaded from js/clock.js
+
+// Audio autoplay strategies
+var unlocked=false;
+function tryPlay(){
+if(unlocked||!currentAudio)return;
+var p=currentAudio.play();
+if(p&&p.then){
+p.then(function(){unlocked=true;isPlaying=true;updatePlayState()}).catch(function(){})
+}
+}
+tryPlay();
+document.addEventListener('DOMContentLoaded',tryPlay);
+window.addEventListener('load',tryPlay);
+var events=['click','mousedown','touchstart','keydown','mousemove','scroll','pointerdown'];
+function onInteract(){
+if(!unlocked&&currentAudio){
+try{
+var ctx=new(window.AudioContext||window.webkitAudioContext)();
+var buf=ctx.createBuffer(1,1,22050);
+var src=ctx.createBufferSource();src.buffer=buf;src.connect(ctx.destination);src.start(0);
+ctx.resume().then(function(){
+currentAudio.play().then(function(){unlocked=true;isPlaying=true;updatePlayState()}).catch(function(){})
+})
+}catch(e){
+currentAudio.play().then(function(){unlocked=true;isPlaying=true;updatePlayState()}).catch(function(){})
+}
+}
+events.forEach(function(ev){document.removeEventListener(ev,onInteract,true)})
+}
+events.forEach(function(ev){document.addEventListener(ev,onInteract,true)});
+var retries=0,retryTimer=setInterval(function(){retries++;if(unlocked||retries>15){clearInterval(retryTimer);return}tryPlay()},2000);
+
+// Play/Pause toggle
+btnPlay.addEventListener('click',function(){
+if(!currentAudio)return;
+if(isPlaying){
+currentAudio.pause();
+isPlaying=false;
+updatePlayState()
+}else{
+currentAudio.play().then(function(){unlocked=true;isPlaying=true;updatePlayState()}).catch(function(){})
+}
+});
+})();
+</script>
+<script src="js/clock.js"></script>
+</body>
+</html>

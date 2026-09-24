@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aviso Legal y Copyright — Another Store</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{height:100%;scroll-behavior:smooth}
+body{
+min-height:100%;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+overflow-x:hidden;color:#07405E;
+background:linear-gradient(135deg,#EAF6FF 0%,#D0ECFB 25%,#A8DCF4 50%,#B8E8D0 75%,#D4F1E8 100%);
+background-attachment:fixed;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:.22}50%{opacity:.35}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.anim-up{animation:fadeUp .7s ease-out both}
+.anim-fade{animation:fadeIn .6s ease-out both}
+.d1{animation-delay:.1s}.d2{animation-delay:.2s}.d3{animation-delay:.3s}.d4{animation-delay:.4s}
+.top-gloss{position:fixed;top:0;left:0;right:0;height:170px;z-index:0;pointer-events:none;background:linear-gradient(to bottom,rgba(255,255,255,.63) 0%,rgba(255,255,255,.26) 55%,transparent 100%)}
+.bubble{position:fixed;border-radius:50%;pointer-events:none;z-index:0}
+.bubble-lg{width:320px;height:320px;left:-70px;top:38%;opacity:.30;background:radial-gradient(circle at 35% 30%,#fff 0%,#BFE9FB 55%,transparent 100%);animation:pulse 6s ease-in-out infinite}
+.bubble-md{width:400px;height:400px;right:-90px;top:-70px;opacity:.26;background:radial-gradient(circle at 35% 30%,#fff 0%,#A8DCF4 58%,transparent 100%);animation:pulse 8s ease-in-out infinite 1s}
+.bubble-sm{width:190px;height:190px;left:42%;bottom:4%;opacity:.22;background:radial-gradient(circle at 35% 30%,#fff 0%,#B6E77A 60%,transparent 100%);animation:float 7s ease-in-out infinite}
+.page{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:40px 24px 80px}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#1F86C8;text-decoration:none;margin-bottom:28px;opacity:.8;transition:opacity .2s}
+.back-link:hover{opacity:1}
+.back-link svg{width:16px;height:16px;fill:#1F86C8}
+.legal-header{text-align:center;margin-bottom:44px}
+.legal-header h1{font-size:32px;font-weight:300;color:#07405E;letter-spacing:-.5px;margin-bottom:6px}
+.legal-header p{font-size:14px;color:#2C5F7E;font-weight:500}
+.legal-card{
+padding:28px 32px;border-radius:14px;margin-bottom:20px;
+border:1px solid rgba(255,255,255,.5);
+background:linear-gradient(to bottom,rgba(237,255,255,.93) 0%,rgba(220,245,255,.77) 45%,rgba(200,240,248,1) 100%);
+box-shadow:0 2px 12px rgba(10,58,86,.2);
+backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.legal-card h2{font-size:18px;font-weight:600;color:#07405E;margin-bottom:14px;padding-left:14px;border-left:4px solid #1F86C8}
+.legal-card h3{font-size:14px;font-weight:600;color:#0B5C8A;margin:16px 0 6px}
+.legal-card p,.legal-card li{font-size:13px;color:#2C5F7E;line-height:1.7}
+.legal-card ul{padding-left:20px;margin:8px 0}
+.legal-card li{margin-bottom:4px}
+.legal-card a{color:#1F86C8;text-decoration:none}
+.legal-card a:hover{text-decoration:underline}
+.asset-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12.5px}
+.asset-table th{text-align:left;padding:8px 10px;background:rgba(31,134,200,.1);color:#07405E;font-weight:600;border-bottom:1px solid rgba(31,134,200,.2)}
+.asset-table td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.4);color:#2C5F7E}
+.asset-table tr:last-child td{border-bottom:none}
+.badge{display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 7px;border-radius:6px;vertical-align:middle;margin-left:6px}
+.badge.own{background:rgba(31,134,200,.15);color:#1F86C8}
+.badge.third{background:rgba(224,140,30,.15);color:#E08C1E}
+.badge.cc{background:rgba(76,162,43,.15);color:#4CA22B}
+.legal-footer{text-align:center;margin-top:48px;font-size:11px;color:#2C5F7E;opacity:.7}
+@media(max-width:700px){
+.legal-header h1{font-size:26px}
+.legal-card{padding:20px 18px}
+.bubble-lg,.bubble-md,.bubble-sm{display:none}
+.asset-table{font-size:11.5px}
+.asset-table th,.asset-table td{padding:6px 8px}
+}
+</style>
+</head>
+<body>
+<div class="top-gloss"></div>
+<div class="bubble bubble-lg"></div>
+<div class="bubble bubble-md"></div>
+<div class="bubble bubble-sm"></div>
+
+<div class="page">
+<a class="back-link anim-up" href="index.html">
+<svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+Volver a Another Store
+</a>
+
+<header class="legal-header anim-up d1">
+<h1>Aviso Legal y Copyright</h1>
+<p>Another Store &copy; 2026 · Making internet funny again since 2026</p>
+</header>
+
+<!-- ===== 1. TITULARIDAD ===== -->
+<section class="legal-card anim-up d2">
+<h2>1. Titularidad del Sitio Web</h2>
+<p>El sitio web <strong>Another Store</strong> es un proyecto personal desarrollado y mantenido por su autor/a. El sitio se aloja en la plataforma NeoCities y no tiene fines comerciales.</p>
+<p>Para cualquier consulta relacionada con este aviso legal, puedes contactar a través de los medios indicados en el propio sitio o en las páginas de descarga de cada producto.</p>
+</section>
+
+<!-- ===== 2. PROPIEDAD INTELECTUAL ===== -->
+<section class="legal-card anim-up d2">
+<h2>2. Propiedad Intelectual y Copyright</h2>
+<p>Salvo que se indique lo contrario para un recurso concreto, <strong>todo el contenido original</strong> de este sitio web está protegido por derechos de autor y pertenece al autor/a de Another Store. Esto incluye, de forma enunciativa pero no limitativa:</p>
+<ul>
+<li>El diseño visual, la estructura HTML, las hojas de estilo CSS y los scripts JavaScript de todas las páginas.</li>
+<li>Los sistemas de diseño <strong>Aero Glass</strong> y <strong>AeroNight</strong> (tokens, gradientes, componentes XAML/CSS).</li>
+<li>Las composiciones musicales originales incluidas en la Music Store.</li>
+<li>Los logotipos, iconos SVG personalizados, capturas de pantalla y recursos gráficos creados para el sitio.</li>
+<li>La aplicación <strong>Emi Toolkit</strong> y su interfaz WPF.</li>
+<li>La mascota interactiva <strong>Clawde</strong>.</li>
+</ul>
+<p>&copy; 2026 Another Store. Todos los derechos reservados sobre el contenido original.</p>
+</section>
+
+<!-- ===== 3. INVENTARIO DE ACTIVOS ===== -->
+<section class="legal-card anim-up d3">
+<h2>3. Inventario de Activos y Licencias</h2>
+<p>A continuación se detalla la titularidad y licencia de cada activo presente en el sitio:</p>
+
+<h3>3.1 Contenido propio (Another Store)</h3>
+<table class="asset-table">
+<thead><tr><th>Activo</th><th>Tipo</th><th>Licencia / Nota</th></tr></thead>
+<tbody>
+<tr><td>Diseño web, HTML, CSS, JS</td><td>Código fuente</td><td>&copy; 2026 Another Store <span class="badge own">Propio</span></td></tr>
+<tr><td>Aero Glass UI Kit (XAML)</td><td>Sistema de diseño</td><td>&copy; 2026 Another Store <span class="badge own">Propio</span></td></tr>
+<tr><td>AeroNight UI Kit (CSS)</td><td>Sistema de diseño</td><td>&copy; 2026 Another Store <span class="badge own">Propio</span></td></tr>
+<tr><td>Emi Toolkit</td><td>Aplicación Windows</td><td>&copy; 2026 Another Store <span class="badge own">Propio</span></td></tr>
+<tr><td>Clawde (mascota escritorio)</td><td>Aplicación overlay</td><td>&copy; 2026 Another Store <span class="badge own">Propio</span></td></tr>
+<tr><td>Another Shop Theme.mp3</td><td>Composición musical</td><td>&copy; 2026 Another Store <span class="badge own">Propio</span></td></tr>
+<tr><td>Another Appstore Theme.mp3</td><td>Composición musical</td><td>&copy; 2026 Another Store <span class="badge own">Propio</span></td></tr>
+<tr><td>Sunlight In The Lobby.mp3</td><td>Composición musical</td><td>&copy; 2026 Another Store <span class="badge own">Propio</span></td></tr>
+<tr><td>Morning In The Lobby.mp3</td><td>Composición musical</td><td>&copy; 2026 Another Store <span class="badge own">Propio</span></td></tr>
+<tr><td>Logotipos e iconos SVG propios</td><td>Recursos gráficos</td><td>&copy; 2026 Another Store <span class="badge own">Propio</span></td></tr>
+</tbody>
+</table>
+
+<h3>3.2 Contenido de terceros</h3>
+<table class="asset-table">
+<thead><tr><th>Activo</th><th>Titular</th><th>Licencia / Nota</th></tr></thead>
+<tbody>
+<tr><td>Zen Browser</td><td>Zen Browser Team</td><td>MPL-2.0 (open source) <span class="badge third">Tercero</span></td></tr>
+<tr><td>Fuentes Segoe UI / Tahoma</td><td>Microsoft Corporation</td><td>Incluidas con Windows; uso en renderizado local <span class="badge third">Tercero</span></td></tr>
+</tbody>
+</table>
+<p>Si algún activo de terceros ha sido incluido sin la atribución adecuada o bajo una licencia incompatible, rogamos que se nos notifique para corregirlo de inmediato.</p>
+</section>
+
+<!-- ===== 4. USO PERMITIDO ===== -->
+<section class="legal-card anim-up d3">
+<h2>4. Uso Permitido del Contenido</h2>
+<h3>4.1 Contenido propio de Another Store</h3>
+<p>El contenido original de este sitio puede consultarse y descargarse para <strong>uso personal y no comercial</strong>. No se permite:</p>
+<ul>
+<li>Redistribuir, vender o sublicenciar ningún activo sin autorización expresa.</li>
+<li>Modificar los activos y presentarlos como obra propia.</li>
+<li>Utilizar los logotipos, nombres de productos o identidad visual de Another Store para promover otros proyectos sin permiso.</li>
+</ul>
+<p>Para usos comerciales, colaboraciones o licencias ampliadas, contacta directamente con el autor/a.</p>
+
+<h3>4.2 Contenido de terceros</h3>
+<p>Los productos de terceros (como Zen Browser) se distribuyen bajo sus propias licencias. Another Store actúa únicamente como enlace o referencia y no reclama propiedad sobre ellos. Consulta la licencia original de cada producto antes de usarlo.</p>
+</section>
+
+<!-- ===== 5. RESPONSABILIDAD ===== -->
+<section class="legal-card anim-up d3">
+<h2>5. Limitación de Responsabilidad</h2>
+<p>El software y los recursos disponibles en Another Store se proporcionan <strong>«tal cual»</strong>, sin garantías de ningún tipo, expresas o implícitas. El autor/a no será responsable de daños directos, indirectos, incidentales o consecuentes derivados del uso o la imposibilidad de uso de cualquier contenido del sitio.</p>
+<p>En particular:</p>
+<ul>
+<li><strong>Emi Toolkit</strong> modifica configuraciones del sistema operativo. Se recomienda crear un punto de restauración antes de usarlo. La herramienta incluye opciones para deshacer cambios, pero el uso es bajo responsabilidad del usuario.</li>
+<li>Las herramientas web (Webtools) se ejecutan íntegramente en el navegador del usuario. No se envían datos a ningún servidor externo.</li>
+<li>Los enlaces a sitios externos (descargas, documentación) se ofrecen como referencia; Another Store no controla ni garantiza el contenido de páginas de terceros.</li>
+</ul>
+</section>
+
+<!-- ===== 6. PRIVACIDAD ===== -->
+<section class="legal-card anim-up d4">
+<h2>6. Privacidad y Datos Personales</h2>
+<p>Another Store <strong>no recopila datos personales</strong>. El sitio es estático, no utiliza cookies de seguimiento, analíticas externas ni formularios que envíen información a servidores propios o de terceros.</p>
+<p>La reproducción de audio se gestiona exclusivamente en el navegador del usuario mediante la Web Audio API. No se transmite ningún dato durante la reproducción musical.</p>
+<p>Si en el futuro se incorporan funcionalidades que requieran tratamiento de datos, se actualizará esta sección conforme a la normativa vigente.</p>
+</section>
+
+<!-- ===== 7. LEGISLACIÓN ===== -->
+<section class="legal-card anim-up d4">
+<h2>7. Legislación Aplicable</h2>
+<p>Este aviso legal se rige por la legislación aplicable en materia de propiedad intelectual y servicios de la sociedad de la información. Para cualquier controversia, las partes se someterán a los juzgados y tribunales que resulten competentes según la normativa vigente.</p>
+</section>
+
+<!-- ===== 8. MODIFICACIONES ===== -->
+<section class="legal-card anim-up d4">
+<h2>8. Modificaciones del Aviso Legal</h2>
+<p>Another Store se reserva el derecho de actualizar o modificar este aviso legal en cualquier momento. La versión vigente será siempre la publicada en esta página. Se recomienda revisarla periódicamente.</p>
+<p><em>Última actualización: septiembre de 2026.</em></p>
+</section>
+
+<footer class="legal-footer anim-fade d4">Another Store &copy; 2026 · Making internet funny again since 2026</footer>
+</div>
+</body>
+</html>

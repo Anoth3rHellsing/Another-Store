@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Another Store — Webtools</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;font-family:'Segoe UI',Tahoma,sans-serif;background:#000}
+.wii-bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at 50% 120%,#1a4a7a 0%,#0a2540 40%,#051525 100%);overflow:hidden}
+.wave{position:absolute;bottom:0;left:0;width:200%;height:100%;opacity:.15;pointer-events:none}
+.wave svg{width:100%;height:100%}
+.wave-1{animation:waveMove 12s linear infinite}
+.wave-2{animation:waveMove 18s linear infinite reverse;opacity:.1}
+@keyframes waveMove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.stars{position:absolute;inset:0;pointer-events:none}
+.star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:twinkle 3s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.2}50%{opacity:.8}}
+.wii-container{position:relative;z-index:1;display:flex;height:100vh;width:100vw}
+.left-panel{flex:0 0 45%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:40px 40px 80px;position:relative;overflow-y:auto}
+.left-panel::-webkit-scrollbar{width:6px}
+.left-panel::-webkit-scrollbar-track{background:rgba(255,255,255,.05);border-radius:3px}
+.left-panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:3px}
+.selected-channel{text-align:center;animation:channelPop .4s cubic-bezier(.2,.8,.3,1) both;width:100%;max-width:380px}
+@keyframes channelPop{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+.selected-icon{width:160px;height:160px;border-radius:24px;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 60px rgba(100,180,255,.3),inset 0 2px 0 rgba(255,255,255,.3);border:3px solid rgba(255,255,255,.2)}
+.selected-icon::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(to bottom,rgba(255,255,255,.4) 0%,rgba(255,255,255,.05) 100%);border-radius:21px 21px 0 0;pointer-events:none}
+.selected-icon svg{width:70px;height:70px;fill:#fff;position:relative;z-index:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+.selected-title{font-size:26px;font-weight:700;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.5);margin-bottom:4px;letter-spacing:.5px}
+.selected-version{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:12px}
+.selected-desc{font-size:13.5px;color:rgba(255,255,255,.8);max-width:340px;margin:0 auto 16px;line-height:1.55;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+.selected-details{text-align:left;max-width:340px;margin:0 auto 20px;padding:16px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1)}
+.selected-details h4{font-size:11px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+.selected-details ul{list-style:none;margin-bottom:14px}
+.selected-details ul li{font-size:12px;color:rgba(255,255,255,.75);padding:3px 0 3px 16px;position:relative;line-height:1.5}
+.selected-details ul li::before{content:'';position:absolute;left:0;top:9px;width:7px;height:7px;border-radius:50%;background:linear-gradient(to bottom,#8FD9F7,#1B7FC0)}
+.selected-details .req-box{font-size:11.5px;color:rgba(255,255,255,.55);line-height:1.6;padding-top:12px;border-top:1px solid rgba(255,255,255,.1)}
+.selected-details .req-box strong{color:rgba(255,255,255,.75);font-weight:600}
+.btn-download{display:inline-flex;align-items:center;gap:10px;padding:14px 32px;border-radius:30px;background:linear-gradient(to bottom,#6dd5fa 0%,#2980b9 100%);border:2px solid rgba(255,255,255,.3);color:#fff;font-size:16px;font-weight:700;cursor:pointer;text-decoration:none;box-shadow:0 4px 20px rgba(0,100,200,.4),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .15s,box-shadow .15s}
+.btn-download:hover{transform:scale(1.05);box-shadow:0 6px 30px rgba(0,150,255,.6)}
+.btn-download:active{transform:scale(.98)}
+.btn-download svg{width:20px;height:20px;fill:currentColor}
+.right-panel{flex:1;display:flex;flex-direction:column;padding:30px;background:linear-gradient(to right,transparent 0%,rgba(0,20,40,.4) 20%,rgba(0,20,40,.6) 100%)}
+.panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.panel-title{font-size:20px;font-weight:300;color:rgba(255,255,255,.9);text-shadow:0 2px 4px rgba(0,0,0,.3)}
+.back-link{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:12px;font-weight:600;text-decoration:none;cursor:pointer;transition:background .2s}
+.back-link:hover{background:rgba(255,255,255,.2)}
+.back-link svg{width:14px;height:14px;fill:currentColor}
+.audio-ctrl{display:flex;align-items:center;gap:8px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);cursor:pointer;transition:background .2s}
+.audio-ctrl:hover{background:rgba(255,255,255,.2)}
+.audio-ctrl svg{width:16px;height:16px;fill:rgba(255,255,255,.8)}
+.audio-bars{display:flex;align-items:end;gap:2px;height:14px}
+.audio-bars span{width:3px;background:#6dd5fa;border-radius:2px;animation:bar .8s ease-in-out infinite alternate}
+.audio-bars span:nth-child(1){height:6px;animation-delay:0s}
+.audio-bars span:nth-child(2){height:12px;animation-delay:.15s}
+.audio-bars span:nth-child(3){height:8px;animation-delay:.3s}
+.audio-bars.paused span{animation:none;height:3px!important}
+@keyframes bar{0%{height:3px}100%{height:14px}}
+.channel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px;overflow-y:auto;padding-right:10px;flex:1;align-content:start}
+.channel-grid::-webkit-scrollbar{width:6px}
+.channel-grid::-webkit-scrollbar-track{background:rgba(255,255,255,.05);border-radius:3px}
+.channel-grid::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:3px}
+.channel-tile{aspect-ratio:1;border-radius:16px;cursor:pointer;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(to bottom,rgba(255,255,255,.15) 0%,rgba(255,255,255,.05) 100%);border:2px solid rgba(255,255,255,.1);box-shadow:0 4px 16px rgba(0,0,0,.3);transition:all .2s cubic-bezier(.2,.8,.3,1)}
+.channel-tile:hover{transform:scale(1.08);border-color:rgba(255,255,255,.4);box-shadow:0 8px 32px rgba(0,100,200,.4),0 0 20px rgba(100,180,255,.2)}
+.channel-tile.active{border-color:#6dd5fa;box-shadow:0 0 30px rgba(100,180,255,.5),0 8px 32px rgba(0,0,0,.4);transform:scale(1.05)}
+.channel-tile::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(to bottom,rgba(255,255,255,.2) 0%,transparent 100%);pointer-events:none}
+.tile-icon{width:64px;height:64px;border-radius:14px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.3)}
+.tile-icon::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(to bottom,rgba(255,255,255,.4) 0%,rgba(255,255,255,.05) 100%);border-radius:13px 13px 0 0;pointer-events:none}
+.tile-icon svg{width:32px;height:32px;fill:#fff;position:relative;z-index:1}
+.tile-name{font-size:12px;font-weight:600;color:#fff;text-align:center;padding:0 8px;text-shadow:0 1px 3px rgba(0,0,0,.5);line-height:1.3}
+.icon-green{background:linear-gradient(to bottom,#8fd95f 0%,#4ca22b 100%)}
+.icon-blue{background:linear-gradient(to bottom,#6fc7f0 0%,#1f86c8 100%)}
+.icon-amber{background:linear-gradient(to bottom,#ffd97a 0%,#e08c1e 100%)}
+.icon-red{background:linear-gradient(to bottom,#ffa694 0%,#c63c22 100%)}
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;height:60px;z-index:10;background:linear-gradient(to top,rgba(0,20,40,.9) 0%,rgba(0,20,40,.6) 70%,transparent 100%);display:flex;align-items:center;justify-content:space-between;padding:0 40px}
+.bottom-left{display:flex;align-items:center;gap:20px}
+.wii-logo{font-size:24px;font-weight:700;color:#fff;font-style:italic;text-shadow:0 2px 8px rgba(0,100,200,.5)}
+.bottom-time{font-size:14px;color:rgba(255,255,255,.7);font-variant-numeric:tabular-nums}
+.bottom-right{display:flex;align-items:center;gap:16px}
+.bottom-btn{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s}
+.bottom-btn:hover{background:rgba(255,255,255,.2)}
+.bottom-btn svg{width:20px;height:20px;fill:rgba(255,255,255,.8)}
+.search-overlay{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;background:rgba(0,10,20,.8);backdrop-filter:blur(8px)}
+.search-overlay.open{display:flex}
+.search-box{width:90%;max-width:500px;padding:20px;border-radius:20px;background:linear-gradient(to bottom,rgba(30,60,90,.95) 0%,rgba(20,40,60,.95) 100%);border:2px solid rgba(255,255,255,.2);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.search-input{width:100%;padding:16px 20px;border-radius:12px;border:2px solid rgba(255,255,255,.2);background:rgba(0,0,0,.3);color:#fff;font-size:18px;outline:none}
+.search-input::placeholder{color:rgba(255,255,255,.4)}
+.search-input:focus{border-color:#6dd5fa}
+.search-hint{margin-top:12px;font-size:12px;color:rgba(255,255,255,.5);text-align:center}
+@media(max-width:900px){
+.wii-container{flex-direction:column}
+.left-panel{flex:0 0 auto;padding:20px;min-height:260px;max-height:55vh}
+.selected-icon{width:100px;height:100px}
+.selected-icon svg{width:44px;height:44px}
+.selected-title{font-size:20px}
+.right-panel{flex:1;padding:20px}
+.channel-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:12px}
+.tile-icon{width:48px;height:48px}
+.tile-icon svg{width:24px;height:24px}
+.tile-name{font-size:10px}
+}
+</style>
+</head>
+<body>
+<div class="wii-bg">
+<div class="stars" id="stars"></div>
+<div class="wave wave-1"><svg viewBox="0 0 1440 320" preserveAspectRatio="none"><path fill="rgba(100,180,255,.3)" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,138.7C672,128,768,160,864,181.3C960,203,1056,213,1152,197.3C1248,181,1344,139,1392,117.3L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"/></svg></div>
+<div class="wave wave-2"><svg viewBox="0 0 1440 320" preserveAspectRatio="none"><path fill="rgba(100,200,255,.2)" d="M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,234.7C672,245,768,235,864,208C960,181,1056,139,1152,128C1248,117,1344,139,1392,149.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"/></svg></div>
+</div>
+<audio id="shopMusic" loop preload="auto"><source src="Music/Another Appstore Theme.mp3" type="audio/mpeg"></audio>
+<div class="search-overlay" id="searchOverlay"><div class="search-box"><input class="search-input" type="text" id="searchInput" placeholder="Buscar herramientas web..." autofocus><p class="search-hint">Presiona ESC para cerrar</p></div></div>
+<div class="wii-container">
+<div class="left-panel">
+<div class="selected-channel" id="selectedChannel">
+<div class="selected-icon icon-blue" id="selIcon"></div>
+<h1 class="selected-title" id="selTitle"></h1>
+<p class="selected-version" id="selVersion"></p>
+<p class="selected-desc" id="selDesc"></p>
+<div class="selected-details" id="selDetails"></div>
+<div class="selected-price" id="selPrice"></div>
+<a class="btn-download" id="selDownload" href="#"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>Conectarse</a>
+</div>
+</div>
+<div class="right-panel">
+<div class="panel-header">
+<div style="display:flex;align-items:center;gap:12px">
+<a class="back-link" href="index.html"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>Volver</a>
+<span class="panel-title">Webtools</span>
+</div>
+<div class="audio-ctrl" id="audioCtrl"><div class="audio-bars paused" id="audioBars"><span></span><span></span><span></span></div><svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg></div>
+</div>
+<div class="channel-grid" id="channelGrid"></div>
+</div>
+</div>
+<div class="bottom-bar">
+<div class="bottom-left"><span class="wii-logo">Another Store</span><span class="bottom-time" id="clock">12:00 PM</span></div>
+<div class="bottom-right">
+<div class="bottom-btn" id="searchBtn" title="Buscar"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
+</div>
+</div>
+<script>
+(function(){
+var tools=[
+{id:'textify',name:'Textify',icon:'blue',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M4 5h16v3H4zm0 5h16v3H4zm0 5h10v3H4z"/></svg>',
+version:'OCR · Aero Glass · 100% en tu navegador',
+desc:'Herramienta de OCR (imagen → texto) con estética Aero Glass. Arrastra, pega o elige una imagen y extrae su texto en español, inglés, francés, alemán y más. Todo se procesa localmente, nada se sube a ningún servidor.',
+features:[
+'OCR con Tesseract.js — español, inglés, francés, alemán, portugués e italiano',
+'Arrastra, pega con Ctrl+V o elige un archivo (PNG · JPG · BMP · WebP)',
+'100% local y privado: la imagen nunca sale de tu navegador',
+'Barra de progreso en vivo y porcentaje de confianza',
+'Copia el texto al portapapeles o descárgalo como .txt'
+],
+req:'Cualquier navegador moderno (Chrome, Edge, Firefox, Zen). La primera vez descarga el motor OCR (~2 MB) desde CDN; luego funciona sin conexión.',
+price:'Gratis',priceNote:'HTML · Webtool',
+downloadUrl:'Webtools/Textify.html'}];
+var grid=document.getElementById('channelGrid'),selIcon=document.getElementById('selIcon'),selTitle=document.getElementById('selTitle'),selVersion=document.getElementById('selVersion'),selDesc=document.getElementById('selDesc'),selDetails=document.getElementById('selDetails'),selPrice=document.getElementById('selPrice'),selDownload=document.getElementById('selDownload'),selectedId='textify';
+function getIconClass(c){return 'icon-'+c}
+tools.forEach(function(tool){
+var tile=document.createElement('div');
+tile.className='channel-tile'+(tool.id===selectedId?' active':'');
+tile.setAttribute('data-id',tool.id);
+tile.setAttribute('data-name',tool.name.toLowerCase());
+tile.innerHTML='<div class="tile-icon '+getIconClass(tool.icon)+'">'+tool.iconSvg+'</div><span class="tile-name">'+tool.name+'</span>';
+tile.addEventListener('click',function(){selectChannel(tool.id)});
+tile.addEventListener('dblclick',function(){window.location.href=tool.downloadUrl});
+grid.appendChild(tile);
+});
+function selectChannel(id){
+selectedId=id;var tool=tools.find(function(a){return a.id===id});if(!tool)return;
+document.querySelectorAll('.channel-tile').forEach(function(t){t.classList.toggle('active',t.getAttribute('data-id')===id)});
+var panel=document.getElementById('selectedChannel');panel.style.animation='none';panel.offsetHeight;panel.style.animation='channelPop .4s cubic-bezier(.2,.8,.3,1) both';
+document.querySelector('.left-panel').scrollTop=0;
+selIcon.className='selected-icon '+getIconClass(tool.icon);
+selIcon.innerHTML=tool.iconSvg;
+selTitle.textContent=tool.name;
+selVersion.textContent=tool.version;
+selDesc.textContent=tool.desc;
+var html='<h4>Características</h4><ul>';
+tool.features.forEach(function(f){html+='<li>'+f+'</li>'});
+html+='</ul><div class="req-box"><strong>Requisitos:</strong> '+tool.req+'</div>';
+selDetails.innerHTML=html;
+selPrice.innerHTML=tool.price+' <span>· '+tool.priceNote+'</span>';
+selDownload.href=tool.downloadUrl;
+selDownload.style.display=tool.downloadUrl==='#'?'none':'inline-flex';
+}
+// Handle hash from URL
+var hash=window.location.hash.replace('#','');
+if(hash&&tools.find(function(a){return a.id===hash}))selectedId=hash;
+selectChannel(selectedId);
+// Stars
+var starsEl=document.getElementById('stars');
+for(var i=0;i<50;i++){var star=document.createElement('div');star.className='star';star.style.left=Math.random()*100+'%';star.style.top=Math.random()*100+'%';star.style.animationDelay=Math.random()*3+'s';star.style.opacity=Math.random()*.5+.2;starsEl.appendChild(star)}
+// Clock
+function updateClock(){var now=new Date(),h=now.getHours(),m=now.getMinutes(),ampm=h>=12?'PM':'AM';h=h%12;h=h?h:12;m=m<10?'0'+m:m;document.getElementById('clock').textContent=h+':'+m+' '+ampm}
+updateClock();setInterval(updateClock,1000);
+// Audio — 5 strategies
+var audio=document.getElementById('shopMusic'),audioCtrl=document.getElementById('audioCtrl'),audioBars=document.getElementById('audioBars'),playing=false,unlocked=false;
+audio.volume=0.4;
+function setPlaying(s){playing=s;if(s)audioBars.classList.remove('paused');else audioBars.classList.add('paused')}
+function tryPlay(){if(unlocked)return;var p=audio.play();if(p&&p.then){p.then(function(){unlocked=true;setPlaying(true)}).catch(function(){})}}
+tryPlay();document.addEventListener('DOMContentLoaded',tryPlay);window.addEventListener('load',tryPlay);
+var events=['click','mousedown','touchstart','keydown','mousemove','scroll','pointerdown'];
+function onInteract(){if(!unlocked){try{var ctx=new(window.AudioContext||window.webkitAudioContext)();var buf=ctx.createBuffer(1,1,22050);var src=ctx.createBufferSource();src.buffer=buf;src.connect(ctx.destination);src.start(0);ctx.resume().then(function(){audio.play().then(function(){unlocked=true;setPlaying(true)}).catch(function(){})})}catch(e){audio.play().then(function(){unlocked=true;setPlaying(true)}).catch(function(){})}}events.forEach(function(ev){document.removeEventListener(ev,onInteract,true)})}
+events.forEach(function(ev){document.addEventListener(ev,onInteract,true)});
+var retries=0,retryTimer=setInterval(function(){retries++;if(unlocked||retries>15){clearInterval(retryTimer);return}tryPlay()},2000);
+audioCtrl.addEventListener('click',function(e){e.stopPropagation();if(playing){audio.pause();setPlaying(false)}else{audio.play().then(function(){unlocked=true;setPlaying(true)}).catch(function(){})}});
+// Search
+var searchOverlay=document.getElementById('searchOverlay'),searchInput=document.getElementById('searchInput'),searchBtn=document.getElementById('searchBtn');
+searchBtn.addEventListener('click',function(){searchOverlay.classList.add('open');setTimeout(function(){searchInput.focus()},100)});
+searchOverlay.addEventListener('click',function(e){if(e.target===searchOverlay)searchOverlay.classList.remove('open')});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')searchOverlay.classList.remove('open')});
+searchInput.addEventListener('input',function(){var q=this.value.toLowerCase().trim();document.querySelectorAll('.channel-tile').forEach(function(tile){var name=tile.getAttribute('data-name')||'';tile.style.display=(!q||name.indexOf(q)!==-1)?'':'none'})});
+})();
+</script>
+</body>
+</html>

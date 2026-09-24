@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DiffGlass — Comparador Aero Glass</title>
+<style>
+  :root{
+    --cDeep:#07405E; --cInk:#0B5C8A; --cBlue2:#1F86C8; --cGreen2:#4CA22B;
+    --cAmber2:#E08C1E; --cRed2:#C63C22; --Muted:#2C5F7E;
+    --shadow:0 2px 16px rgba(10,58,86,.28);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:"Segoe UI",system-ui,sans-serif;
+    color:var(--cDeep);
+    background:
+      linear-gradient(0deg, rgba(151,220,95,.85) 0%, rgba(103,208,196,.82) 18%, rgba(77,187,236,.82) 40%, rgba(149,217,246,.85) 70%, rgba(227,244,253,.89) 100%),
+      linear-gradient(105deg,#E3F4FD 0%, #95D9F6 30%, #4DBBEC 60%, #67D0C4 82%, #97DC5F 100%);
+    background-blend-mode:normal;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  /* TopGloss overlay */
+  body::before{
+    content:""; position:fixed; top:0; left:0; right:0; height:170px; pointer-events:none; z-index:0;
+    background:linear-gradient(180deg, rgba(255,255,255,.63) 0%, rgba(255,255,255,.26) 55%, transparent 100%);
+  }
+  /* Bubbles */
+  .bubble{position:fixed; border-radius:50%; pointer-events:none; z-index:0;
+    background:radial-gradient(circle at 35% 30%, #fff 0%, var(--t) 58%, transparent 100%);}
+  .b1{width:300px;height:300px; left:-70px; top:38%; opacity:.30; --t:rgba(111,199,240,.9);}
+  .b2{width:380px;height:380px; right:-90px; top:-110px; opacity:.26; --t:rgba(182,231,122,.9);}
+  .b3{width:180px;height:180px; left:52%; bottom:-60px; opacity:.22; --t:rgba(255,217,122,.9);}
+
+  .window{
+    position:relative; z-index:1; max-width:1080px; margin:46px auto; padding:0 24px 60px;
+  }
+  .titlebar{display:flex; align-items:center; gap:12px; height:46px; padding:0 6px;}
+  .titlebar .logo{width:26px;height:26px;border-radius:7px;
+    background:linear-gradient(180deg,#8FD9F7 0%,#39A5DC 49%,#1B7FC0 51%,#39B0E4 100%);
+    border:1px solid rgba(255,255,255,.55); box-shadow:var(--shadow);
+    display:grid;place-items:center;color:#fff;font-size:14px;font-weight:600;}
+  .titlebar h1{font-size:25px; font-weight:300; color:var(--cDeep);}
+  .titlebar h1 b{font-weight:600;}
+  .titlebar .sub{margin-left:auto; font-size:12.5px; color:var(--Muted);}
+
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,.93) 0%, rgba(255,255,255,.77) 45%, rgba(235,248,255,.69) 100%);
+    border:1px solid rgba(255,255,255,.5);
+    border-radius:14px; padding:18px; box-shadow:var(--shadow);
+    backdrop-filter:blur(12px);
+    margin-bottom:18px;
+  }
+  h2{font-size:15px; font-weight:600; margin-bottom:10px; color:var(--cDeep);}
+
+  .inputs{display:flex; gap:14px; flex-wrap:wrap;}
+  .inputs .col{flex:1 1 320px; display:flex; flex-direction:column;}
+  .inputs label{font-size:13px; font-weight:600; margin-bottom:6px; color:var(--cDeep);}
+
+  .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:12px;}
+
+  /* Gloss buttons */
+  .btn{
+    position:relative; height:40px; padding:0 22px; border:none; border-radius:9px;
+    font-family:inherit; font-size:13.5px; color:#fff; cursor:pointer; overflow:hidden;
+    box-shadow:var(--shadow), inset 0 0 0 1px rgba(255,255,255,.35);
+    transition:transform .05s, filter .15s;
+  }
+  .btn::before{content:""; position:absolute; inset:0; border-radius:8px; opacity:0;
+    background:rgba(255,255,255,.24); transition:.15s;}
+  .btn:hover::before{opacity:1;}
+  .btn:active{transform:translateY(1px); filter:brightness(.92);}
+  .btn:disabled{opacity:.45; cursor:default; transform:none;}
+  .btn .shine{position:absolute; left:1px; right:1px; top:1px; height:17px; border-radius:8px 8px 0 0;
+    background:linear-gradient(180deg, rgba(255,255,255,.72) 0%, rgba(255,255,255,.22) 48%, transparent 50%); pointer-events:none;}
+  .btn-blue{background:linear-gradient(180deg,#8FD9F7 0%,#39A5DC 49%,#1B7FC0 51%,#39B0E4 100%);}
+  .btn-green{background:linear-gradient(180deg,#CBF08F 0%,#74C23C 49%,#4E9C22 51%,#7FCF43 100%);}
+  .btn-amber{background:linear-gradient(180deg,#FFE6A8 0%,#F0A93A 49%,#D5871B 51%,#F7B950 100%);}
+  .btn-red{background:linear-gradient(180deg,#FFB6A6 0%,#DD5C3E 49%,#B63B22 51%,#E0704F 100%);}
+
+  .btn-ghost{
+    height:34px; padding:0 16px; border-radius:8px; border:1px solid rgba(255,255,255,.5);
+    background:rgba(255,255,255,.4); color:var(--cDeep); font-family:inherit; font-size:13px; cursor:pointer; transition:.15s;
+  }
+  .btn-ghost:hover{background:rgba(255,255,255,.67);}
+
+  textarea{
+    width:100%; min-height:220px; resize:vertical; padding:12px;
+    border-radius:8px; border:1px solid rgba(140,255,255,255,.5); border-color:rgba(44,95,126,.25);
+    background:rgba(255,255,255,.70); color:var(--cDeep);
+    font-family:Consolas,monospace; font-size:13px; line-height:1.5;
+  }
+  textarea:focus{outline:2px solid rgba(31,134,200,.45); outline-offset:-1px;}
+
+  /* Contadores — stat tiles glass */
+  .counters{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px;}
+  .counter{
+    flex:1 1 150px; min-width:140px; padding:10px 14px; border-radius:12px;
+    display:flex; flex-direction:column; gap:2px; position:relative; overflow:hidden;
+    border:1px solid rgba(255,255,255,.6); box-shadow:var(--shadow);
+    background:linear-gradient(180deg, rgba(255,255,255,.88) 0%, rgba(255,255,255,.6) 100%);
+    backdrop-filter:blur(10px);
+  }
+  .counter::after{content:""; position:absolute; left:1px; right:1px; top:1px; height:12px;
+    border-radius:11px 11px 0 0; background:linear-gradient(180deg, rgba(255,255,255,.75), transparent);
+    pointer-events:none;}
+  .counter .lbl{font-size:11.5px; font-weight:600; letter-spacing:.3px; text-transform:uppercase;}
+  .counter .num{font-size:22px; font-weight:700; line-height:1.15; font-variant-numeric:tabular-nums;}
+  .counter.add{background:linear-gradient(180deg, rgba(203,240,143,.45) 0%, rgba(116,194,60,.28) 100%);}
+  .counter.add .lbl, .counter.add .num{color:#2E5F14;}
+  .counter.del{background:linear-gradient(180deg, rgba(255,182,166,.45) 0%, rgba(198,60,34,.28) 100%);}
+  .counter.del .lbl, .counter.del .num{color:#6E1F0F;}
+  .counter.same{background:linear-gradient(180deg, rgba(143,217,247,.45) 0%, rgba(31,134,200,.26) 100%);}
+  .counter.same .lbl, .counter.same .num{color:var(--cDeep);}
+
+  /* Vista diff */
+  .diffwrap{
+    border-radius:10px; border:1px solid rgba(44,95,126,.25); overflow:auto; max-height:520px;
+    background:rgba(255,255,255,.78); backdrop-filter:blur(8px);
+    font-family:Consolas,"Courier New",monospace; font-size:13px; line-height:1.55;
+  }
+  .dl{display:flex; white-space:pre-wrap; word-break:break-all; padding:0 6px 0 0;}
+  .dl .ln{
+    flex:0 0 48px; text-align:right; padding:1px 8px; color:var(--Muted); user-select:none;
+    font-variant-numeric:tabular-nums;
+    border-right:1px solid rgba(44,95,126,.18); background:rgba(255,255,255,.45);
+  }
+  .dl .mark{flex:0 0 18px; text-align:center; user-select:none; font-weight:700;}
+  .dl .txt{flex:1 1 auto; padding:1px 8px; color:#0B3350;}
+  .dl.add{background:rgba(116,194,60,.16);} .dl.add .mark{color:#2E7D14;} .dl.add .txt{color:#1E4610;}
+  .dl.del{background:rgba(198,60,34,.14);} .dl.del .mark{color:#A32B12;} .dl.del .txt{color:#5E1C0E;}
+  .dl.same{background:transparent;}
+  .dl .txt:empty::after{content:" ";}
+  .empty{padding:26px; text-align:center; color:var(--Muted); font-family:"Segoe UI",system-ui,sans-serif; font-size:13.5px;}
+
+  /* Responsive: textareas y contadores apilados en móvil */
+  @media (max-width:640px){
+    .window{margin:24px auto; padding:0 12px 40px;}
+    .inputs{flex-direction:column;}
+    .inputs .col{flex:1 1 auto;}
+    textarea{min-height:160px;}
+    .counters{flex-direction:column;}
+    .counter{flex:1 1 auto; flex-direction:row; align-items:baseline; gap:8px;}
+    .counter .num{font-size:18px;}
+    .dl .ln{flex:0 0 36px; padding:1px 6px;}
+    .titlebar h1{font-size:21px;}
+  }
+
+  .status{font-size:12.5px; color:var(--Muted); margin-top:8px; min-height:16px;}
+
+  .toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:rgba(255,255,255,.9); backdrop-filter:blur(10px); color:var(--cDeep);
+    border:1px solid rgba(255,255,255,.6); border-radius:10px; padding:10px 20px;
+    box-shadow:var(--shadow); font-size:13px; opacity:0; pointer-events:none; transition:.25s; z-index:9;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div class="bubble b1"></div><div class="bubble b2"></div><div class="bubble b3"></div>
+
+<div class="window">
+  <div class="titlebar">
+    <div class="logo">±</div>
+    <h1>Diff<b>Glass</b></h1>
+    <span class="sub">Comparador de textos · Aero Glass</span>
+  </div>
+
+  <div class="card">
+    <h2>1 · Pega los textos a comparar</h2>
+    <div class="inputs">
+      <div class="col">
+        <label for="txtA">Texto A (original)</label>
+        <textarea id="txtA" placeholder="Pega aquí el texto original…" spellcheck="false"></textarea>
+      </div>
+      <div class="col">
+        <label for="txtB">Texto B (modificado)</label>
+        <textarea id="txtB" placeholder="Pega aquí el texto modificado…" spellcheck="false"></textarea>
+      </div>
+    </div>
+    <div class="row">
+      <button id="btnCompare" class="btn btn-blue"><span class="shine"></span>Comparar</button>
+      <button id="btnClear" class="btn-ghost">Limpiar todo</button>
+      <span id="status" class="status"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>2 · Resultado (vista unificada)</h2>
+    <div class="counters">
+      <span class="counter add"><span class="lbl">Añadidas</span><span class="num" id="cAdd">0</span></span>
+      <span class="counter del"><span class="lbl">Eliminadas</span><span class="num" id="cDel">0</span></span>
+      <span class="counter same"><span class="lbl">Sin cambios</span><span class="num" id="cSame">0</span></span>
+    </div>
+    <div id="diffwrap" class="diffwrap"><div class="empty">Pulsa <b>Comparar</b> para ver las diferencias…</div></div>
+    <div class="row">
+      <button id="btnCopy" class="btn btn-green" disabled><span class="shine"></span>Copiar resultado</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+let lastPlain = '';
+
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2200); }
+
+function splitLines(text){
+  return text.replace(/\r\n?/g,'\n').split('\n');
+}
+
+/* Diff LCS línea a línea. Suficiente hasta ~2000 líneas. */
+function diffLines(a, b){
+  const n = a.length, m = b.length;
+  // Tabla LCS (Int32Array para ahorrar memoria)
+  const w = m + 1;
+  const dp = new Int32Array((n+1) * w);
+  for(let i = n-1; i >= 0; i--){
+    for(let j = m-1; j >= 0; j--){
+      dp[i*w+j] = a[i] === b[j] ? dp[(i+1)*w + (j+1)] + 1
+                                : Math.max(dp[(i+1)*w + j], dp[i*w + (j+1)]);
+    }
+  }
+  const ops = [];
+  let i = 0, j = 0;
+  while(i < n && j < m){
+    if(a[i] === b[j]){ ops.push(['same', a[i], i+1, j+1]); i++; j++; }
+    else if(dp[(i+1)*w + j] >= dp[i*w + (j+1)]){
+      ops.push(['del', a[i], i+1, null]); i++;
+    } else {
+      ops.push(['add', b[j], null, j+1]); j++;
+    }
+  }
+  while(i < n){ ops.push(['del', a[i], i+1, null]); i++; }
+  while(j < m){ ops.push(['add', b[j], null, j+1]); j++; }
+  return ops;
+}
+
+function esc(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+$('btnCompare').addEventListener('click', () => {
+  const a = splitLines($('txtA').value);
+  const b = splitLines($('txtB').value);
+  if(a.length * b.length > 4000000){
+    $('status').textContent = 'Textos demasiado grandes para el algoritmo LCS (límite ~2000×2000 líneas).';
+    toast('Textos demasiado grandes');
+    return;
+  }
+  const t0 = performance.now();
+  const ops = diffLines(a, b);
+  const ms = performance.now() - t0;
+
+  let add=0, del=0, same=0;
+  const rows = ops.map(op => {
+    const [type, text, la, lb] = op;
+    if(type === 'add') add++;
+    else if(type === 'del') del++;
+    else same++;
+    const ln = type === 'add' ? (lb ?? '') : (la ?? '');
+    const mark = type === 'add' ? '+' : type === 'del' ? '-' : ' ';
+    return `<div class="dl ${type}"><span class="ln">${ln}</span><span class="mark">${mark}</span><span class="txt">${esc(text) || ' '}</span></div>`;
+  }).join('');
+  const wrap = $('diffwrap');
+  wrap.innerHTML = rows ? rows : '<div class="empty">No hay diferencias: los textos son idénticos.</div>';
+  wrap.scrollTop = 0;
+
+  $('cAdd').textContent = add;
+  $('cDel').textContent = del;
+  $('cSame').textContent = same;
+
+  lastPlain = ops.map(op => {
+    const mark = op[0] === 'add' ? '+ ' : op[0] === 'del' ? '- ' : '  ';
+    return mark + op[1];
+  }).join('\n');
+  $('btnCopy').disabled = false;
+  $('status').textContent = `Comparado en ${ms.toFixed(0)} ms — ${ops.length} líneas en total.`;
+  toast('Comparación lista ✓');
+});
+
+$('btnCopy').addEventListener('click', async () => {
+  try{
+    await navigator.clipboard.writeText(lastPlain);
+    toast('Resultado copiado al portapapeles ✓');
+  }catch(e){
+    toast('No se pudo copiar');
+  }
+});
+
+$('btnClear').addEventListener('click', () => {
+  $('txtA').value = ''; $('txtB').value = '';
+  $('diffwrap').innerHTML = '<div class="empty">Pulsa <b>Comparar</b> para ver las diferencias…</div>';
+  $('cAdd').textContent = $('cDel').textContent = $('cSame').textContent = '0';
+  $('btnCopy').disabled = true; lastPlain = '';
+  $('status').textContent = '';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B64Glass — Codificador Aero Glass</title>
+<style>
+  :root{
+    --cDeep:#07405E; --cInk:#0B5C8A; --cBlue2:#1F86C8; --cGreen2:#4CA22B;
+    --cAmber2:#E08C1E; --cRed2:#C63C22; --Muted:#2C5F7E;
+    --shadow:0 2px 16px rgba(10,58,86,.28);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:"Segoe UI",system-ui,sans-serif;
+    color:var(--cDeep);
+    background:
+      linear-gradient(0deg, rgba(151,220,95,.85) 0%, rgba(103,208,196,.82) 18%, rgba(77,187,236,.82) 40%, rgba(149,217,246,.85) 70%, rgba(227,244,253,.89) 100%),
+      linear-gradient(105deg,#E3F4FD 0%, #95D9F6 30%, #4DBBEC 60%, #67D0C4 82%, #97DC5F 100%);
+    background-blend-mode:normal;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:""; position:fixed; top:0; left:0; right:0; height:170px; pointer-events:none; z-index:0;
+    background:linear-gradient(180deg, rgba(255,255,255,.63) 0%, rgba(255,255,255,.26) 55%, transparent 100%);
+  }
+  .bubble{position:fixed; border-radius:50%; pointer-events:none; z-index:0;
+    background:radial-gradient(circle at 35% 30%, #fff 0%, var(--t) 58%, transparent 100%);}
+  .b1{width:300px;height:300px; left:-70px; top:38%; opacity:.30; --t:rgba(111,199,240,.9);}
+  .b2{width:380px;height:380px; right:-90px; top:-110px; opacity:.26; --t:rgba(182,231,122,.9);}
+  .b3{width:180px;height:180px; left:52%; bottom:-60px; opacity:.22; --t:rgba(255,217,122,.9);}
+
+  .window{
+    position:relative; z-index:1; max-width:980px; margin:46px auto; padding:0 24px 60px;
+  }
+  .titlebar{display:flex; align-items:center; gap:12px; height:46px; padding:0 6px;}
+  .titlebar .logo{width:26px;height:26px;border-radius:7px;
+    background:linear-gradient(180deg,#8FD9F7 0%,#39A5DC 49%,#1B7FC0 51%,#39B0E4 100%);
+    border:1px solid rgba(255,255,255,.55); box-shadow:var(--shadow);
+    display:grid;place-items:center;color:#fff;font-size:14px;font-weight:600;}
+  .titlebar h1{font-size:25px; font-weight:300; color:var(--cDeep);}
+  .titlebar h1 b{font-weight:600;}
+  .titlebar .sub{margin-left:auto; font-size:12.5px; color:var(--Muted);}
+
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,.93) 0%, rgba(255,255,255,.77) 45%, rgba(235,248,255,.69) 100%);
+    border:1px solid rgba(255,255,255,.5);
+    border-radius:14px; padding:18px; box-shadow:var(--shadow);
+    backdrop-filter:blur(12px);
+    margin-bottom:18px;
+  }
+  h2{font-size:15px; font-weight:600; margin-bottom:10px; color:var(--cDeep);}
+
+  /* Chips (pestañas) */
+  .tabs{display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap;}
+  .tab{
+    position:relative; height:32px; padding:0 20px; border:none; border-radius:16px;
+    font-family:inherit; font-size:13px; color:var(--cDeep); cursor:pointer; overflow:hidden;
+    border:1px solid rgba(255,255,255,.5);
+    box-shadow:0 1px 8px rgba(10,58,86,.18), inset 0 0 0 1px rgba(255,255,255,.30);
+    transition:transform .05s, filter .15s, box-shadow .15s;
+    background:linear-gradient(180deg, rgba(255,255,255,.75) 0%, rgba(255,255,255,.45) 49%, rgba(235,248,255,.35) 51%, rgba(255,255,255,.55) 100%);
+    backdrop-filter:blur(8px);
+  }
+  .tab:hover{background:linear-gradient(180deg, rgba(255,255,255,.9) 0%, rgba(255,255,255,.6) 49%, rgba(235,248,255,.5) 51%, rgba(255,255,255,.7) 100%);}
+  .tab:active{transform:translateY(1px);}
+  .tab.active{
+    color:#fff;
+    box-shadow:var(--shadow), inset 0 0 0 1px rgba(255,255,255,.35);
+    background:linear-gradient(180deg,#8FD9F7 0%,#39A5DC 49%,#1B7FC0 51%,#39B0E4 100%);
+  }
+  .tab .shine{position:absolute; left:1px; right:1px; top:1px; height:14px; border-radius:15px 15px 0 0;
+    background:linear-gradient(180deg, rgba(255,255,255,.6) 0%, rgba(255,255,255,.14) 48%, transparent 50%); pointer-events:none; opacity:0; transition:.15s;}
+  .tab.active .shine{opacity:1;}
+
+  .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:12px;}
+
+  /* Gloss buttons */
+  .btn{
+    position:relative; height:40px; padding:0 22px; border:none; border-radius:9px;
+    font-family:inherit; font-size:13.5px; color:#fff; cursor:pointer; overflow:hidden;
+    box-shadow:var(--shadow), inset 0 0 0 1px rgba(255,255,255,.35);
+    transition:transform .05s, filter .15s;
+  }
+  .btn::before{content:""; position:absolute; inset:0; border-radius:8px; opacity:0;
+    background:rgba(255,255,255,.24); transition:.15s;}
+  .btn:hover::before{opacity:1;}
+  .btn:active{transform:translateY(1px); filter:brightness(.92);}
+  .btn:disabled{opacity:.45; cursor:default; transform:none;}
+  .btn .shine{position:absolute; left:1px; right:1px; top:1px; height:17px; border-radius:8px 8px 0 0;
+    background:linear-gradient(180deg, rgba(255,255,255,.72) 0%, rgba(255,255,255,.22) 48%, transparent 50%); pointer-events:none;}
+  .btn-blue{background:linear-gradient(180deg,#8FD9F7 0%,#39A5DC 49%,#1B7FC0 51%,#39B0E4 100%);}
+  .btn-green{background:linear-gradient(180deg,#CBF08F 0%,#74C23C 49%,#4E9C22 51%,#7FCF43 100%);}
+  .btn-amber{background:linear-gradient(180deg,#FFE6A8 0%,#F0A93A 49%,#D5871B 51%,#F7B950 100%);}
+  .btn-red{background:linear-gradient(180deg,#FFB6A6 0%,#DD5C3E 49%,#B63B22 51%,#E0704F 100%);}
+
+  .btn-ghost{
+    height:34px; padding:0 16px; border-radius:8px; border:1px solid rgba(255,255,255,.5);
+    background:rgba(255,255,255,.4); color:var(--cDeep); font-family:inherit; font-size:13px; cursor:pointer; transition:.15s;
+  }
+  .btn-ghost:hover{background:rgba(255,255,255,.67);}
+
+  textarea{
+    width:100%; min-height:180px; resize:vertical; padding:12px;
+    border-radius:8px; border:1px solid rgba(44,95,126,.25);
+    background:rgba(255,255,255,.70); color:var(--cDeep);
+    font-family:Consolas,monospace; font-size:13px; line-height:1.5;
+    transition:border-color .15s;
+  }
+  textarea:focus{outline:2px solid rgba(31,134,200,.45); outline-offset:-1px;}
+  textarea[readonly]{
+    background:linear-gradient(180deg, rgba(226,244,255,.75) 0%, rgba(210,235,250,.75) 100%);
+    border-color:rgba(31,134,200,.28);
+  }
+
+  label.chk{display:inline-flex; align-items:center; gap:7px; font-size:13px; color:var(--cDeep); cursor:pointer;}
+  label.chk input{width:16px; height:16px; accent-color:var(--cBlue2);}
+
+  .status{font-size:12.5px; color:var(--Muted); margin-top:8px; min-height:16px; transition:.2s;}
+  .status.err{
+    color:#A9321C; font-weight:600;
+    background:linear-gradient(180deg, rgba(255,235,230,.85) 0%, rgba(255,224,217,.8) 100%);
+    border:1px solid rgba(198,60,34,.35); border-radius:8px; padding:7px 10px;
+    box-shadow:0 1px 6px rgba(198,60,34,.15);
+  }
+
+  .toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:rgba(255,255,255,.9); backdrop-filter:blur(10px); color:var(--cDeep);
+    border:1px solid rgba(255,255,255,.6); border-radius:10px; padding:10px 20px;
+    box-shadow:var(--shadow); font-size:13px; opacity:0; pointer-events:none; transition:.25s; z-index:9;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  /* Responsive */
+  @media (max-width:600px){
+    .window{margin:24px auto; padding:0 12px 40px;}
+    .titlebar{height:auto; flex-wrap:wrap;}
+    .titlebar h1{font-size:22px;}
+    .titlebar .sub{margin-left:0; width:100%; font-size:12px;}
+    .card{padding:14px;}
+    .row{flex-direction:column; align-items:stretch;}
+    .row .btn, .row .btn-ghost{width:100%;}
+    label.chk{margin-left:0 !important;}
+  }
+</style>
+</head>
+<body>
+<div class="bubble b1"></div><div class="bubble b2"></div><div class="bubble b3"></div>
+
+<div class="window">
+  <div class="titlebar">
+    <div class="logo">⟷</div>
+    <h1>B64<b>Glass</b></h1>
+    <span class="sub">Base64 · URL encode · Aero Glass</span>
+  </div>
+
+  <div class="tabs">
+    <button id="tabB64" class="tab active"><span class="shine"></span>Base64</button>
+    <button id="tabUrl" class="tab"><span class="shine"></span>URL Encode</button>
+  </div>
+
+  <!-- ===== Pestaña Base64 ===== -->
+  <div id="panelB64">
+    <div class="card">
+      <h2>1 · Entrada</h2>
+      <textarea id="inB64" placeholder="Escribe o pega aquí el texto (o el Base64 que quieras decodificar)…" spellcheck="false"></textarea>
+      <div class="row">
+        <button id="btnEnc" class="btn btn-blue"><span class="shine"></span>Codificar</button>
+        <button id="btnDec" class="btn btn-green"><span class="shine"></span>Decodificar</button>
+        <button id="btnClearB64" class="btn-ghost">Limpiar</button>
+        <label class="chk" style="margin-left:auto"><input type="checkbox" id="chkData"> Mostrar como URL de datos</label>
+      </div>
+      <div id="statusB64" class="status"></div>
+    </div>
+
+    <div class="card">
+      <h2>2 · Resultado</h2>
+      <textarea id="outB64" placeholder="El resultado aparecerá aquí…" spellcheck="false" readonly></textarea>
+      <div class="row">
+        <button id="btnCopyB64" class="btn btn-green" disabled><span class="shine"></span>Copiar</button>
+        <button id="btnSwapB64" class="btn btn-amber" disabled><span class="shine"></span>Intercambiar ↕</button>
+        <button id="btnClearOutB64" class="btn-ghost">Vaciar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Pestaña URL Encode ===== -->
+  <div id="panelUrl" style="display:none">
+    <div class="card">
+      <h2>1 · Entrada</h2>
+      <textarea id="inUrl" placeholder="Escribe o pega aquí el texto (o la URL codificada)…" spellcheck="false"></textarea>
+      <div class="row">
+        <button id="btnEncUrl" class="btn btn-blue"><span class="shine"></span>Codificar</button>
+        <button id="btnDecUrl" class="btn btn-green"><span class="shine"></span>Decodificar</button>
+        <button id="btnClearUrl" class="btn-ghost">Limpiar</button>
+      </div>
+      <div id="statusUrl" class="status"></div>
+    </div>
+
+    <div class="card">
+      <h2>2 · Resultado</h2>
+      <textarea id="outUrl" placeholder="El resultado aparecerá aquí…" spellcheck="false" readonly></textarea>
+      <div class="row">
+        <button id="btnCopyUrl" class="btn btn-green" disabled><span class="shine"></span>Copiar</button>
+        <button id="btnSwapUrl" class="btn btn-amber" disabled><span class="shine"></span>Intercambiar ↕</button>
+        <button id="btnClearOutUrl" class="btn-ghost">Vaciar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2200); }
+
+/* ---------- Pestañas ---------- */
+$('tabB64').addEventListener('click', () => switchTab('B64'));
+$('tabUrl').addEventListener('click', () => switchTab('Url'));
+function switchTab(which){
+  const b64 = which === 'B64';
+  $('tabB64').classList.toggle('active', b64);
+  $('tabUrl').classList.toggle('active', !b64);
+  $('panelB64').style.display = b64 ? '' : 'none';
+  $('panelUrl').style.display = b64 ? 'none' : '';
+}
+
+function setStatus(el, msg, isErr){
+  el.textContent = msg;
+  el.classList.toggle('err', !!isErr);
+}
+
+/* ---------- Base64 ---------- */
+const inB64 = $('inB64'), outB64 = $('outB64'), statusB64 = $('statusB64');
+
+function toB64(str){
+  const bytes = new TextEncoder().encode(str);
+  let bin = '';
+  bytes.forEach(b => bin += String.fromCharCode(b));
+  return btoa(bin);
+}
+function fromB64(b64){
+  const clean = b64.replace(/\s+/g, '');
+  if(!/^[A-Za-z0-9+/]*={0,2}$/.test(clean))
+    throw new Error('El texto contiene caracteres no válidos para Base64 (solo se permiten A–Z, a–z, 0–9, +, / y =).');
+  if(clean.length % 4 === 1)
+    throw new Error('Longitud de Base64 no válida (la cadena no es múltiplo de 4).');
+  const bin = atob(clean);
+  const bytes = new Uint8Array(bin.length);
+  for(let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  try{
+    return new TextDecoder('utf-8', {fatal:true}).decode(bytes);
+  }catch{
+    throw new Error('Los datos decodificados no son texto UTF-8 válido (¿es contenido binario?).');
+  }
+}
+
+function setResult(out, val, copyBtn, swapBtn){
+  out.value = val;
+  copyBtn.disabled = swapBtn.disabled = !val;
+}
+
+$('btnEnc').addEventListener('click', () => {
+  const s = inB64.value;
+  if(!s.trim()){ setStatus(statusB64, 'Escribe algo en la entrada primero.'); return; }
+  try{
+    let res = toB64(s);
+    setStatus(statusB64, '');
+    if($('chkData').checked) res = 'data:text/plain;base64,' + res;
+    setResult(outB64, res, $('btnCopyB64'), $('btnSwapB64'));
+    toast('Texto codificado ✓');
+  }catch(err){ setStatus(statusB64, 'Error: ' + err.message, true); }
+});
+
+$('btnDec').addEventListener('click', () => {
+  const s = inB64.value.replace(/^data:[^,]*,/, '');
+  if(!s.trim()){ setStatus(statusB64, 'Escribe algo en la entrada primero.'); return; }
+  try{
+    setResult(outB64, fromB64(s), $('btnCopyB64'), $('btnSwapB64'));
+    setStatus(statusB64, '');
+    toast('Texto decodificado ✓');
+  }catch(err){
+    setResult(outB64, '', $('btnCopyB64'), $('btnSwapB64'));
+    setStatus(statusB64, 'Error al decodificar: ' + err.message, true);
+    toast('Base64 no válido');
+  }
+});
+
+$('btnClearB64').addEventListener('click', () => {
+  inB64.value=''; setStatus(statusB64, '');
+});
+$('btnClearOutB64').addEventListener('click', () => {
+  setResult(outB64, '', $('btnCopyB64'), $('btnSwapB64'));
+});
+$('btnCopyB64').addEventListener('click', async () => {
+  await navigator.clipboard.writeText(outB64.value);
+  toast('Copiado al portapapeles ✓');
+});
+$('btnSwapB64').addEventListener('click', () => {
+  const a = inB64.value; inB64.value = outB64.value; outB64.value = a;
+  $('btnCopyB64').disabled = $('btnSwapB64').disabled = !outB64.value;
+  toast('Entrada y salida intercambiadas ↕');
+});
+
+/* ---------- URL Encode ---------- */
+const inUrl = $('inUrl'), outUrl = $('outUrl'), statusUrl = $('statusUrl');
+
+$('btnEncUrl').addEventListener('click', () => {
+  const s = inUrl.value;
+  if(!s){ setStatus(statusUrl, 'Escribe algo en la entrada primero.'); return; }
+  setResult(outUrl, encodeURIComponent(s), $('btnCopyUrl'), $('btnSwapUrl'));
+  setStatus(statusUrl, '');
+  toast('Texto codificado ✓');
+});
+
+$('btnDecUrl').addEventListener('click', () => {
+  const s = inUrl.value;
+  if(!s){ setStatus(statusUrl, 'Escribe algo en la entrada primero.'); return; }
+  try{
+    setResult(outUrl, decodeURIComponent(s), $('btnCopyUrl'), $('btnSwapUrl'));
+    setStatus(statusUrl, '');
+    toast('Texto decodificado ✓');
+  }catch(err){
+    setResult(outUrl, '', $('btnCopyUrl'), $('btnSwapUrl'));
+    setStatus(statusUrl, 'Error al decodificar: secuencia % escape no válida o incompleta.', true);
+    toast('URL codificada no válida');
+  }
+});
+
+$('btnClearUrl').addEventListener('click', () => {
+  inUrl.value=''; setStatus(statusUrl, '');
+});
+$('btnClearOutUrl').addEventListener('click', () => {
+  setResult(outUrl, '', $('btnCopyUrl'), $('btnSwapUrl'));
+});
+$('btnCopyUrl').addEventListener('click', async () => {
+  await navigator.clipboard.writeText(outUrl.value);
+  toast('Copiado al portapapeles ✓');
+});
+$('btnSwapUrl').addEventListener('click', () => {
+  const a = inUrl.value; inUrl.value = outUrl.value; outUrl.value = a;
+  $('btnCopyUrl').disabled = $('btnSwapUrl').disabled = !outUrl.value;
+  toast('Entrada y salida intercambiadas ↕');
+});
+</script>
+</body>
+</html>
