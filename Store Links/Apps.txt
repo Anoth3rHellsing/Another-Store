@@ -1,9 +1,10 @@
-EmiToolkit: https://drive.google.com/drive/folders/1Y24xFe7hFfOLNuhqCa42-CWv8KT1_w4G?usp=sharing
-Project Vinyl: https://drive.google.com/drive/folders/18XaBudntHXv3EeLK_iTiSTEl3TkMYVFt?usp=sharing
-Clawde: https://drive.google.com/drive/folders/1hCHDWYbiXt-4TuAQ7fvjO9Hg-t28_FRX?usp=sharing
-ByteBangers: # (pending release)
-Clockwarp: # (pending release)
-ClothingDesigner: # (pending release)
-Dynamedia: # (pending release)
-CityMapper: # (pending release)
-Duplicated: # (pending release)
+EmiToolkit: https://drive.google.com/drive/folders/1YqH4J5SSc9ciaaN1zGL9sPF_4zTACykO?usp=drive_link
+Project Vinyl: https://drive.google.com/drive/folders/1YqH4J5SSc9ciaaN1zGL9sPF_4zTACykO?usp=drive_link
+Clawde: https://drive.google.com/drive/folders/1CuojMrFvIN8aNlJP10hI3YOlkWqRfGMj?usp=sharing
+ByteBangers: https://drive.google.com/drive/folders/1p2KsebWzomw4uphvKaiDDVnkdyeWi5Ts?usp=drive_link
+Clockwarp: # https://drive.google.com/drive/folders/1OqM3vzasOSfUgs_GWbZ8HP3Dmh4VHCfD?usp=sharing
+ClothingDesigner: # https://drive.google.com/drive/folders/1HU2otoOD_JNLF3GZZCrXcIvh6Iwe_R5R?usp=sharing
+Dynamedia: # https://drive.google.com/drive/folders/1MJBOPkAuSaTSryyQDubhwP8iZlklxX9c?usp=sharing
+CityMapper: # https://drive.google.com/drive/folders/1MJBOPkAuSaTSryyQDubhwP8iZlklxX9c?usp=sharing
+Duplicated: # https://drive.google.com/drive/folders/1MJBOPkAuSaTSryyQDubhwP8iZlklxX9c?usp=sharing
+A.N.O.T.H.E.R.'s Private: https://drive.google.com/drive/folders/1OCw5z9dnEsMznYtq4SCB-HqdqGa201ke?usp=drive_link
