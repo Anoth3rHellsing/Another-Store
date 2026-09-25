@@ -40,6 +40,8 @@ html,body{height:100%;overflow:hidden;font-family:'Segoe UI',Tahoma,sans-serif;b
 .btn-download:hover{transform:scale(1.05);box-shadow:0 6px 30px rgba(0,150,255,.6)}
 .btn-download:active{transform:scale(.98)}
 .btn-download svg{width:20px;height:20px;fill:currentColor}
+.selected-price{font-size:14px;color:#fff;margin-bottom:16px;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+.selected-price span{color:rgba(255,255,255,.7)}
 .right-panel{flex:1;display:flex;flex-direction:column;padding:30px;background:linear-gradient(to right,transparent 0%,rgba(0,20,40,.4) 20%,rgba(0,20,40,.6) 100%)}
 .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
 .panel-title{font-size:20px;font-weight:300;color:rgba(255,255,255,.9);text-shadow:0 2px 4px rgba(0,0,0,.3)}
@@ -107,7 +109,7 @@ html,body{height:100%;overflow:hidden;font-family:'Segoe UI',Tahoma,sans-serif;b
 <div class="wave wave-1"><svg viewBox="0 0 1440 320" preserveAspectRatio="none"><path fill="rgba(100,180,255,.3)" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,138.7C672,128,768,160,864,181.3C960,203,1056,213,1152,197.3C1248,181,1344,139,1392,117.3L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"/></svg></div>
 <div class="wave wave-2"><svg viewBox="0 0 1440 320" preserveAspectRatio="none"><path fill="rgba(100,200,255,.2)" d="M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,234.7C672,245,768,235,864,208C960,181,1056,139,1152,128C1248,117,1344,139,1392,149.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"/></svg></div>
 </div>
-<audio id="shopMusic" loop preload="auto"><source src="Music/Another Appstore Theme.mp3" type="audio/mpeg"></audio>
+<audio id="shopMusic" loop preload="auto" autoplay><source src="Music/(WebTools) Glass_Horizon.mp3" type="audio/mpeg"></audio>
 <div class="search-overlay" id="searchOverlay"><div class="search-box"><input class="search-input" type="text" id="searchInput" placeholder="Buscar herramientas web..." autofocus><p class="search-hint">Presiona ESC para cerrar</p></div></div>
 <div class="wii-container">
 <div class="left-panel">
@@ -141,21 +143,128 @@ html,body{height:100%;overflow:hidden;font-family:'Segoe UI',Tahoma,sans-serif;b
 <script>
 (function(){
 var tools=[
-{id:'textify',name:'Textify',icon:'blue',
-iconSvg:'<svg viewBox="0 0 24 24"><path d="M4 5h16v3H4zm0 5h16v3H4zm0 5h10v3H4z"/></svg>',
-version:'OCR · Aero Glass · 100% en tu navegador',
-desc:'Herramienta de OCR (imagen → texto) con estética Aero Glass. Arrastra, pega o elige una imagen y extrae su texto en español, inglés, francés, alemán y más. Todo se procesa localmente, nada se sube a ningún servidor.',
-features:[
-'OCR con Tesseract.js — español, inglés, francés, alemán, portugués e italiano',
-'Arrastra, pega con Ctrl+V o elige un archivo (PNG · JPG · BMP · WebP)',
-'100% local y privado: la imagen nunca sale de tu navegador',
-'Barra de progreso en vivo y porcentaje de confianza',
-'Copia el texto al portapapeles o descárgalo como .txt'
-],
-req:'Cualquier navegador moderno (Chrome, Edge, Firefox, Zen). La primera vez descarga el motor OCR (~2 MB) desde CDN; luego funciona sin conexión.',
+{id:'wordmeter',name:'WordMeter',icon:'blue',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zM6 20V4h5v7h7v9H6z"/></svg>',
+version:'Contador de palabras · Aero Glass',
+desc:'Analiza texto en tiempo real: cuenta palabras, caracteres, frases y párrafos. Calcula tiempo estimado de lectura y habla, y muestra la densidad de keywords.',
+features:['Conteo de palabras, caracteres, frases y párrafos','Tiempo estimado de lectura (200 ppm) y habla (130 ppm)','Densidad de keywords con top 3 automático o keyword personalizada','Stopwords en español e inglés','Copia el resultado al portapapeles'],
+req:'Navegador moderno con soporte Unicode property escapes (Chrome 64+, Edge 79+, Firefox 78+). Fallback incluido para navegadores antiguos.',
 price:'Gratis',priceNote:'HTML · Webtool',
-downloadUrl:'Webtools/Textify.html'}];
-var grid=document.getElementById('channelGrid'),selIcon=document.getElementById('selIcon'),selTitle=document.getElementById('selTitle'),selVersion=document.getElementById('selVersion'),selDesc=document.getElementById('selDesc'),selDetails=document.getElementById('selDetails'),selPrice=document.getElementById('selPrice'),selDownload=document.getElementById('selDownload'),selectedId='textify';
+downloadUrl:'Webtools/WordMeter.html'},
+{id:'textcleaner',name:'TextCleaner',icon:'green',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>',
+version:'Limpiador de texto · Aero Glass',
+desc:'Limpia texto copiado de PDFs o fuentes sucias: elimina saltos de línea excesivos, espacios dobles, puntos finales de línea y caracteres no imprimibles.',
+features:['Elimina saltos de línea excesivos y espacios múltiples','Quita puntos finales de cada línea','Normaliza espacios y trim','Transformación de caso (minúsculas, mayúsculas, capitalizar)','Historial de últimas 5 limpiezas en localStorage'],
+req:'Cualquier navegador moderno. Clipboard API con fallback para navegadores antiguos.',
+price:'Gratis',priceNote:'HTML · Webtool',
+downloadUrl:'Webtools/TextCleaner.html'},
+{id:'diffglass',name:'DiffGlass',icon:'amber',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z"/></svg>',
+version:'Comparador de textos · Aero Glass',
+desc:'Compara dos textos lado a lado y resalta las diferencias línea por línea usando un algoritmo LCS (Longest Common Subsequence).',
+features:['Algoritmo LCS con programación dinámica','Visualización side-by-side e inline','Resaltado verde (añadidas), rojo (eliminadas), ámbar (modificadas)','Scroll sincronizado entre paneles','Opciones: ignorar espacios y mayúsculas'],
+req:'Navegador moderno. Advertencia de rendimiento para textos >1000 líneas.',
+price:'Gratis',priceNote:'HTML · Webtool',
+downloadUrl:'Webtools/DiffGlass.html'},
+{id:'unitglass',name:'UnitGlass',icon:'blue',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93z"/></svg>',
+version:'Conversor de unidades · Aero Glass',
+desc:'Convierte entre 45 unidades en 8 categorías: longitud, peso, temperatura, datos digitales, velocidad, área, volumen y tiempo.',
+features:['8 categorías con 45 unidades','Conversión en tiempo real','Toggle binario/decimal para datos digitales','Precisión configurable (auto, 2, 4, 6 decimales)','Historial de últimas 10 conversiones'],
+req:'Cualquier navegador moderno.',
+price:'Gratis',priceNote:'HTML · Webtool',
+downloadUrl:'Webtools/UnitGlass.html'},
+{id:'b64glass',name:'B64Glass',icon:'green',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>',
+version:'Codificador Base64/URL · Aero Glass',
+desc:'Codifica y decodifica texto en Base64 y URL encode/decode. Soporta archivos hasta 5MB con advertencia de tamaño.',
+features:['Modos Base64 y URL Encode/Decode con tabs','Soporte UTF-8 y binario','Upload de archivos con FileReader','Estadísticas de longitud y ratio de expansión','Detección automática de formato con sugerencias'],
+req:'Navegador moderno con TextEncoder/TextDecoder. Clipboard API con fallback.',
+price:'Gratis',priceNote:'HTML · Webtool',
+downloadUrl:'Webtools/B64Glass.html'},
+{id:'colorglass',name:'ColorGlass',icon:'red',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>',
+version:'Conversor de color · Aero Glass',
+desc:'Convierte entre HEX, RGB y HSL en tiempo real. Incluye rueda de color interactiva, verificación de contraste WCAG 2.1 y paleta generada automáticamente.',
+features:['Conversión bidireccional HEX/RGB/HSL','Rueda de color canvas interactiva con click/drag','Contraste WCAG 2.1 con niveles AAA/AA/Fail','Paleta automática: complementario, análogos, triádicos','Historial de últimos 10 colores'],
+req:'Navegador moderno con soporte Canvas API.',
+price:'Gratis',priceNote:'HTML · Webtool',
+downloadUrl:'Webtools/ColorGlass.html'},
+{id:'qrglass',name:'QRGlass',icon:'blue',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M3 11h8V3H3v8zm2-6h4v4H5V5zm8-2v8h8V3h-8zm6 6h-4V5h4v4zM3 21h8v-8H3v8zm2-6h4v4H5v-4zm13-2h-2v3h-3v2h3v3h2v-3h3v-2h-3v-3zm-5 8h2v2h-2v-2zm4 0h2v2h-2v-2z"/></svg>',
+version:'Generador QR · Aero Glass',
+desc:'Genera códigos QR para texto, URL, WiFi, email, teléfono, SMS y vCard. Personaliza tamaño, colores y corrección de errores.',
+features:['7 tipos de QR con tabs','Personalización: tamaño, colores, corrección (L/M/Q/H)','Preview en tiempo real con debounce','Descarga PNG y copia al portapapeles','Validación de capacidad con estimación UTF-8'],
+req:'Navegador moderno. Usa qrcode.js 1.0.0 vía CDN.',
+price:'Gratis',priceNote:'HTML · Webtool',
+downloadUrl:'Webtools/QRGlass.html'},
+{id:'imgglass',name:'ImgGlass',icon:'green',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>',
+version:'Compresor de imágenes · Aero Glass',
+desc:'Redimensiona, comprime y transforma imágenes directamente en el navegador. Todo el procesamiento es local usando Canvas API.',
+features:['Upload drag & drop con preview','Redimensionamiento con lock aspect ratio','Compresión JPEG/PNG/WebP con slider de calidad','Rotar, flip horizontal/vertical y recorte básico','Comparación original vs resultado con % reducción'],
+req:'Navegador moderno con Canvas API y FileReader. Sin uploads a servidor.',
+price:'Gratis',priceNote:'HTML · Webtool',
+downloadUrl:'Webtools/ImgGlass.html'},
+{id:'placerglass',name:'PlacerGlass',icon:'amber',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/><circle cx="12" cy="12" r="3"/></svg>',
+version:'Generador de placeholders · Aero Glass',
+desc:'Crea imágenes placeholder y favicons personalizados con colores, texto y dimensiones configurables. Descarga PNG directa.',
+features:['Placeholder: ancho/alto, colores, fuente, bordes redondeados, gradiente','Favicon: presets 16×16 a 512×512, modo crear con letra/emoji, modo upload','Preview dual cuadrada + circular para favicon','Historial de últimos 5 generados','Drag & drop para upload de favicon'],
+req:'Navegador moderno con Canvas API.',
+price:'Gratis',priceNote:'HTML · Webtool',
+downloadUrl:'Webtools/PlacerGlass.html'},
+{id:'metroglass',name:'MetroGlass',icon:'red',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>',
+version:'Metrónomo y ruido · Aero Glass',
+desc:'Metrónomo preciso con Web Audio API y generador de ruido blanco/rosa/marrón. Funcionan simultáneamente con controles independientes.',
+features:['Metrónomo: BPM 20-300, compases 2/4 a 6/8, tap tempo','Sonido con osciladores internos (sin archivos externos)','Generador de ruido: blanco, rosa, marrón','Timer opcional con auto-apagado','Visualizador RMS en canvas en tiempo real'],
+req:'Navegador moderno con Web Audio API. Requiere gesto de usuario para iniciar audio.',
+price:'Gratis',priceNote:'HTML · Webtool',
+downloadUrl:'Webtools/MetroGlass.html'},
+{id:'pomodoro',name:'Pomodoro',icon:'red',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>',
+version:'Temporizador Pomodoro · Aero Glass',
+desc:'Temporizador Pomodoro clásico con fases focus/shortBreak/longBreak, anillo de progreso SVG y estadísticas persistidas.',
+features:['Fases configurables: focus, short break, long break','Anillo de progreso SVG animado','Notificaciones del navegador y sonido Web Audio','Estadísticas: pomodoros hoy, tiempo total, racha','Gráfico semanal de barras CSS'],
+req:'Navegador moderno con Notification API y Web Audio API.',
+price:'Gratis',priceNote:'HTML · Webtool',
+downloadUrl:'Webtools/Pomodoro.html'},
+{id:'todoaero',name:'TodoAero',icon:'blue',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
+version:'Lista de tareas · Aero Glass',
+desc:'Gestor de tareas completo con persistencia localStorage, categorías, prioridades, fechas de vencimiento y tema claro/oscuro.',
+features:['CRUD completo con drag & drop para reordenar','5 categorías con colores y 3 niveles de prioridad','Filtros: todas, pendientes, completadas, vencidas','Búsqueda en tiempo real y exportar/importar JSON','Tema claro/oscuro con persistencia'],
+req:'Cualquier navegador moderno con localStorage.',
+price:'Gratis',priceNote:'HTML · Webtool',
+downloadUrl:'Webtools/TodoAero.html'},
+{id:'tipcalc',name:'TipCalc',icon:'green',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>',
+version:'Calculadora de propinas · Aero Glass',
+desc:'Calcula propinas y divide cuentas en tiempo real. Botones rápidos de porcentaje, slider y stepper de personas.',
+features:['Botones rápidos 10%/15%/18%/20%/25% + slider + input custom','Stepper de personas (+/-)','Resultados en tiempo real: propina, total, por persona','Desglose visual detallado','Historial de últimos 5 cálculos'],
+req:'Cualquier navegador moderno.',
+price:'Gratis',priceNote:'HTML · Webtool',
+downloadUrl:'Webtools/TipCalc.html'},
+{id:'passgen',name:'PassGen',icon:'amber',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>',
+version:'Generador de contraseñas · Aero Glass',
+desc:'Genera contraseñas seguras con crypto.getRandomValues() y passphrases con diccionario bilingüe. Incluye medidor de fuerza.',
+features:['Generación criptográficamente segura (nunca Math.random)','Medidor de fuerza con 4 niveles y tiempo de crackeo','Generador de passphrases con ~500 palabras ES/EN','6 toggles: mayúsculas, minúsculas, números, símbolos, extendidos, excluir ambiguos','Historial de últimas 10 contraseñas'],
+req:'Navegador moderno con crypto.getRandomValues().',
+price:'Gratis',priceNote:'HTML · Webtool',
+downloadUrl:'Webtools/PassGen.html'},
+{id:'hashtool',name:'HashTool',icon:'red',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>',
+version:'Verificador de hashes · Aero Glass',
+desc:'Calcula hashes SHA-1/256/384/512 con Web Crypto API y MD5 manual. Verifica integridad de archivos y texto.',
+features:['SHA-1/256/384/512 vía Web Crypto API + MD5 manual RFC 1321','Modo texto, archivo individual y batch','Verificación con indicador visual ✓/✗','Exportación batch a CSV/TXT','Advertencias educativas sobre algoritmos deprecated'],
+req:'Navegador moderno con Web Crypto API. MD5 disponible como fallback sin Web Crypto.',
+price:'Gratis',priceNote:'HTML · Webtool',
+downloadUrl:'Webtools/HashTool.html'}
+];
+var grid=document.getElementById('channelGrid'),selIcon=document.getElementById('selIcon'),selTitle=document.getElementById('selTitle'),selVersion=document.getElementById('selVersion'),selDesc=document.getElementById('selDesc'),selDetails=document.getElementById('selDetails'),selPrice=document.getElementById('selPrice'),selDownload=document.getElementById('selDownload'),selectedId='wordmeter';
 function getIconClass(c){return 'icon-'+c}
 tools.forEach(function(tool){
 var tile=document.createElement('div');

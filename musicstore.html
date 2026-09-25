@@ -124,6 +124,8 @@ html,body{height:100%;overflow:hidden;font-family:'Segoe UI',Tahoma,sans-serif;b
 /* Icon colors */
 .icon-purple{background:linear-gradient(135deg,#c79cff,#7b4cd9)}
 .icon-pink{background:linear-gradient(135deg,#ff9ecd,#d94c8b)}
+.icon-cyan{background:linear-gradient(135deg,#6fc7f0,#1f86c8)}
+.icon-amber{background:linear-gradient(135deg,#ffd97a,#e08c1e)}
 
 /* ===== BOTTOM BAR ===== */
 .bottom-bar{position:fixed;bottom:0;left:0;right:0;height:56px;z-index:10;background:linear-gradient(to top,rgba(10,5,21,.95) 0%,rgba(10,5,21,.7) 70%,transparent 100%);display:flex;align-items:center;justify-content:space-between;padding:0 40px}
@@ -151,10 +153,12 @@ html,body{height:100%;overflow:hidden;font-family:'Segoe UI',Tahoma,sans-serif;b
 </div>
 
 <!-- Audio elements for each track -->
-<audio id="audio-sunlight" loop preload="auto"><source src="Music/Sunlight_In_The_Lobby.mp3" type="audio/mpeg"></audio>
-<audio id="audio-morning" loop preload="auto"><source src="Music/Morning_in_the_Lobby.mp3" type="audio/mpeg"></audio>
+<audio id="audio-sunlight" loop preload="auto"><source src="Music/(Music Shop)Sunlight_In_The_Lobby.mp3" type="audio/mpeg"></audio>
+<audio id="audio-morning" loop preload="auto"><source src="Music/(Fun UI Kits)Morning_in_the_Lobby.mp3" type="audio/mpeg"></audio>
 <audio id="audio-shop" loop preload="auto"><source src="Music/Another Shop Theme.mp3" type="audio/mpeg"></audio>
 <audio id="audio-appstore" loop preload="auto"><source src="Music/Another Appstore Theme.mp3" type="audio/mpeg"></audio>
+	<audio id="audio-glasshorizon" loop preload="auto"><source src="Music/(WebTools) Glass_Horizon.mp3" type="audio/mpeg"></audio>
+	<audio id="audio-beneath" loop preload="auto"><source src="Music/(A.N.O.T.H.E.R.'s Private)Beneath_the_Glossy_Surface.mp3" type="audio/mpeg"></audio>
 
 <div class="music-container">
 <!-- LEFT: Now Playing -->
@@ -235,6 +239,18 @@ downloadUrl:'https://drive.google.com/drive/folders/1ugiv_jZ-w7x6GJ0EJalAc_nQMbg
 iconSvg:'<svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>',
 desc:'El tema del App Store estilo Wii. Ondas sonoras que evocan nostalgia y exploración digital.',
 features:['Loop infinito seamless','Estilo Wii Menu / ambient','Composición original 2026','Formato MP3 320kbps'],
+req:'Cualquier reproductor de audio.',
+downloadUrl:'https://drive.google.com/drive/folders/1ugiv_jZ-w7x6GJ0EJalAc_nQMbgrMBnz?usp=sharing',driveUrl:'https://drive.google.com/drive/folders/1ugiv_jZ-w7x6GJ0EJalAc_nQMbgrMBnz?usp=sharing'},
+{id:'glasshorizon',name:'Glass Horizon',icon:'cyan',dur:'—',audioId:'audio-glasshorizon',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>',
+desc:'Paisaje sonoro cristalino para WebTools. Sintetizadores suaves y pads etéreos que acompañan el flujo de trabajo.',
+features:['Loop infinito seamless','Estilo glass / ambient electrónico','Composición original 2026','Formato MP3'],
+req:'Cualquier reproductor de audio.',
+downloadUrl:'https://drive.google.com/drive/folders/1ugiv_jZ-w7x6GJ0EJalAc_nQMbgrMBnz?usp=sharing',driveUrl:'https://drive.google.com/drive/folders/1ugiv_jZ-w7x6GJ0EJalAc_nQMbgrMBnz?usp=sharing'},
+{id:'beneath',name:'Beneath the Glossy Surface',icon:'amber',dur:'—',audioId:'audio-beneath',
+iconSvg:'<svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>',
+desc:'Tema exclusivo de A.N.O.T.H.E.R.\'s Private. Texturas oscuras y brillantes que evocan misterio bajo una capa pulida.',
+features:['Loop infinito seamless','Estilo dark ambient / glossy','Composición original 2026','Formato MP3'],
 req:'Cualquier reproductor de audio.',
 downloadUrl:'https://drive.google.com/drive/folders/1ugiv_jZ-w7x6GJ0EJalAc_nQMbgrMBnz?usp=sharing',driveUrl:'https://drive.google.com/drive/folders/1ugiv_jZ-w7x6GJ0EJalAc_nQMbgrMBnz?usp=sharing'}
 ];
