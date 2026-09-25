@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A.N.O.T.H.E.R. Private — Canal Dedicado</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;font-family:'Segoe UI',Tahoma,sans-serif;background:#050c18;color:#fff;overflow-x:hidden}
+body{min-height:100vh;display:flex;flex-direction:column}
+
+/* Fondo animado estilo Another Store */
+.bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at 50% 120%,#0f2847 0%,#071428 45%,#030a14 100%);overflow:hidden;pointer-events:none}
+.stars{position:absolute;inset:0}
+.star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:twinkle 3s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.15}50%{opacity:.7}}
+.wave{position:absolute;bottom:0;left:0;width:200%;height:40%;opacity:.08;animation:waveMove 14s linear infinite}
+.wave svg{width:100%;height:100%}
+@keyframes waveMove{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* Layout */
+.container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:40px 24px 80px;width:100%}
+
+/* Header / Hero */
+.hero{text-align:center;margin-bottom:48px;animation:fadeUp .6s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.hero-icon{width:120px;height:120px;margin:0 auto 20px;border-radius:24px;background:linear-gradient(135deg,#1a5fa8 0%,#0b2d52 100%);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 40px rgba(30,120,220,.35),inset 0 2px 0 rgba(255,255,255,.25);border:2px solid rgba(255,255,255,.15);position:relative;overflow:hidden}
+.hero-icon::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(to bottom,rgba(255,255,255,.35),rgba(255,255,255,.02));border-radius:22px 22px 0 0;pointer-events:none}
+.hero-icon svg{width:56px;height:56px;fill:#fff;position:relative;z-index:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4))}
+.hero h1{font-size:32px;font-weight:700;letter-spacing:.5px;text-shadow:0 2px 12px rgba(0,0,0,.6);margin-bottom:6px}
+.hero .tagline{font-size:14px;color:rgba(255,255,255,.55);margin-bottom:16px}
+.hero .desc{font-size:15px;color:rgba(255,255,255,.82);max-width:600px;margin:0 auto;line-height:1.6;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+
+/* Botones de acción */
+.actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 30px;border-radius:30px;font-size:15px;font-weight:700;text-decoration:none;cursor:pointer;transition:transform .15s,box-shadow .15s;border:2px solid rgba(255,255,255,.25)}
+.btn:hover{transform:scale(1.05)}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(to bottom,#6dd5fa 0%,#2980b9 100%);color:#fff;box-shadow:0 4px 24px rgba(0,100,200,.4),inset 0 1px 0 rgba(255,255,255,.4)}
+.btn-primary:hover{box-shadow:0 6px 32px rgba(0,150,255,.55)}
+.btn-secondary{background:rgba(255,255,255,.08);color:rgba(255,255,255,.9);box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.btn-secondary:hover{background:rgba(255,255,255,.15)}
+.btn svg{width:18px;height:18px;fill:currentColor}
+
+/* Secciones */
+.section{margin-bottom:40px;animation:fadeUp .6s ease both}
+.section:nth-child(2){animation-delay:.1s}
+.section:nth-child(3){animation-delay:.2s}
+.section:nth-child(4){animation-delay:.3s}
+.section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.45);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08)}
+
+/* Cards grid */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.card{padding:20px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);transition:border-color .2s,background .2s}
+.card:hover{border-color:rgba(100,180,255,.3);background:rgba(255,255,255,.09)}
+.card h3{font-size:15px;font-weight:600;color:#fff;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card h3 .dot{width:8px;height:8px;border-radius:50%;background:linear-gradient(to bottom,#8FD9F7,#1B7FC0);flex-shrink:0}
+.card p{font-size:13px;color:rgba(255,255,255,.7);line-height:1.55}
+
+/* Timeline de avances */
+.timeline{position:relative;padding-left:24px;border-left:2px solid rgba(255,255,255,.1)}
+.timeline-item{position:relative;margin-bottom:24px}
+.timeline-item:last-child{margin-bottom:0}
+.timeline-item::before{content:'';position:absolute;left:-29px;top:6px;width:12px;height:12px;border-radius:50%;background:linear-gradient(to bottom,#6dd5fa,#2980b9);border:2px solid #0a1628;box-shadow:0 0 8px rgba(100,180,255,.4)}
+.timeline-item.pending::before{background:rgba(255,255,255,.15);box-shadow:none}
+.timeline-date{font-size:11px;font-weight:600;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.timeline-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:4px}
+.timeline-desc{font-size:13px;color:rgba(255,255,255,.65);line-height:1.5}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-left:8px;vertical-align:middle}
+.badge-done{background:rgba(40,180,120,.2);color:#4ade80;border:1px solid rgba(40,180,120,.3)}
+.badge-progress{background:rgba(100,180,255,.15);color:#6dd5fa;border:1px solid rgba(100,180,255,.25)}
+.badge-planned{background:rgba(255,255,255,.08);color:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.1)}
+
+/* Info box */
+.info-box{padding:20px;border-radius:14px;background:rgba(100,180,255,.06);border:1px solid rgba(100,180,255,.12)}
+.info-box p{font-size:13px;color:rgba(255,255,255,.7);line-height:1.6;margin-bottom:8px}
+.info-box p:last-child{margin-bottom:0}
+.info-box strong{color:rgba(255,255,255,.9);font-weight:600}
+
+/* Back link */
+.back-nav{margin-bottom:24px}
+.back-link{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.75);font-size:12px;font-weight:600;text-decoration:none;transition:background .2s}
+.back-link:hover{background:rgba(255,255,255,.15);color:#fff}
+.back-link svg{width:14px;height:14px;fill:currentColor}
+
+/* Footer */
+.footer{text-align:center;padding:32px 0 0;border-top:1px solid rgba(255,255,255,.06);margin-top:20px}
+.footer p{font-size:12px;color:rgba(255,255,255,.3)}
+
+/* Responsive */
+@media(max-width:600px){
+  .hero h1{font-size:24px}
+  .hero-icon{width:90px;height:90px;border-radius:18px}
+  .hero-icon svg{width:42px;height:42px}
+  .cards{grid-template-columns:1fr}
+  .actions{flex-direction:column;align-items:center}
+  .btn{width:100%;justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="stars" id="stars"></div>
+  <div class="wave">
+    <svg viewBox="0 0 1440 320" preserveAspectRatio="none"><path fill="#6dd5fa" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,261.3C960,256,1056,224,1152,197.3C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"/></svg>
+  </div>
+</div>
+
+<div class="container">
+
+  <nav class="back-nav">
+    <a href="appstore.html" class="back-link">
+      <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      Volver a la Store
+    </a>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-icon">
+      <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+    </div>
+    <h1>A.N.O.T.H.E.R. Private</h1>
+    <p class="tagline">Web App · Multiplataforma + Móvil · Ecosistema Another Store</p>
+    <p class="desc">Aplicación web privada con acceso restringido y contenido exclusivo. Diseñada para uso personal dentro del ecosistema A.N.O.T.H.E.R., con interfaz segura y estilo visual distintivo.</p>
+
+    <div class="actions">
+      <a href="https://another-private.replit.app/app" target="_blank" rel="noopener" class="btn btn-primary">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        Abrir Web App
+      </a>
+      <a href="https://drive.google.com/drive/folders/1OCw5z9dnEsMznYtq4SCB-HqdqGa201ke?usp=drive_link" target="_blank" rel="noopener" class="btn btn-secondary">
+        <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        Descargar (Drive)
+      </a>
+    </div>
+  </header>
+
+  <!-- Características -->
+  <section class="section">
+    <div class="section-title">Características</div>
+    <div class="cards">
+      <div class="card">
+        <h3><span class="dot"></span>Acceso Directo</h3>
+        <p>Sin instalación ni descarga. Abre <strong>another-private.replit.app/app</strong> desde cualquier navegador en escritorio o móvil.</p>
+      </div>
+      <div class="card">
+        <h3><span class="dot"></span>Interfaz Privada</h3>
+        <p>Acceso controlado con autenticación. Contenido visible solo para usuarios autorizados dentro del ecosistema.</p>
+      </div>
+      <div class="card">
+        <h3><span class="dot"></span>Sin Telemetría</h3>
+        <p>Cero rastreo, cero analytics externos. La aplicación no recopila datos ni envía información a terceros.</p>
+      </div>
+      <div class="card">
+        <h3><span class="dot"></span>Multiplataforma</h3>
+        <p>Funciona en Chrome, Firefox, Edge y Safari. Responsive completo para móviles sin app nativa dedicada.</p>
+      </div>
+      <div class="card">
+        <h3><span class="dot"></span>Ecosistema Another</h3>
+        <p>Diseño integrado en la identidad visual de Another Store. Coherente con el lenguaje estético del proyecto.</p>
+      </div>
+      <div class="card">
+        <h3><span class="dot"></span>Contenido Exclusivo</h3>
+        <p>Gestión de contenido personalizado y recursos privados accesibles únicamente a través de esta interfaz.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Avances / Roadmap -->
+  <section class="section">
+    <div class="section-title">Avances del Proyecto</div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-date">Septiembre 2026</div>
+        <div class="timeline-title">Publicación en Another Store <span class="badge badge-done">Completado</span></div>
+        <div class="timeline-desc">Integración completa en la tienda como proyecto principal. Canal dedicado creado con página propia, enlace web directo y descarga vía Google Drive.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">Septiembre 2026</div>
+        <div class="timeline-title">Web App en Producción <span class="badge badge-done">Completado</span></div>
+        <div class="timeline-desc">Despliegue en Replit Apps. Acceso público vía another-private.replit.app/app con interfaz funcional y responsive.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">Agosto 2026</div>
+        <div class="timeline-title">Diseño Visual & Identidad <span class="badge badge-done">Completado</span></div>
+        <div class="timeline-desc">Definición del estilo visual privado integrado en el ecosistema Another Store. Iconografía, paleta y componentes UI.</div>
+      </div>
+      <div class="timeline-item pending">
+        <div class="timeline-date">Próximamente</div>
+        <div class="timeline-title">Autenticación Mejorada <span class="badge badge-planned">Planificado</span></div>
+        <div class="timeline-desc">Sistema de login con credenciales personales y sesiones persistentes para acceso más seguro al contenido privado.</div>
+      </div>
+      <div class="timeline-item pending">
+        <div class="timeline-date">Próximamente</div>
+        <div class="timeline-title">Gestión de Contenido Dinámico <span class="badge badge-planned">Planificado</span></div>
+        <div class="timeline-desc">Panel de administración para actualizar recursos exclusivos sin modificar el código fuente de la aplicación.</div>
+      </div>
+      <div class="timeline-item pending">
+        <div class="timeline-date">Próximamente</div>
+        <div class="timeline-title">Modo Offline / PWA <span class="badge badge-planned">Planificado</span></div>
+        <div class="timeline-desc">Soporte Progressive Web App para funcionamiento sin conexión y experiencia nativa en móviles.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Requisitos -->
+  <section class="section">
+    <div class="section-title">Requisitos Técnicos</div>
+    <div class="info-box">
+      <p><strong>Navegadores soportados:</strong> Chrome 90+, Firefox 88+, Edge 90+, Safari 14+. Versiones anteriores pueden presentar problemas de renderizado.</p>
+      <p><strong>Móvil:</strong> iOS 14+ (Safari), Android 10+ (Chrome). No requiere app nativa — funciona completamente desde el navegador.</p>
+      <p><strong>Conexión:</strong> Requiere internet para acceder a la web app. La versión descargable vía Google Drive puede usarse localmente sin conexión.</p>
+      <p><strong>Privacidad:</strong> Sin cookies de terceros, sin trackers, sin telemetría. Los datos de sesión se gestionan localmente en el navegador.</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>A.N.O.T.H.E.R. Private · Parte del ecosistema Another Store · 2026</p>
+  </footer>
+
+</div>
+
+<script>
+// Generar estrellas aleatorias
+(function(){
+  var c=document.getElementById('stars');
+  for(var i=0;i<60;i++){
+    var s=document.createElement('div');
+    s.className='star';
+    s.style.left=Math.random()*100+'%';
+    s.style.top=Math.random()*100+'%';
+    s.style.animationDelay=Math.random()*3+'s';
+    s.style.opacity=Math.random()*.5+.1;
+    c.appendChild(s);
+  }
+})();
+</script>
+</body>
+</html>
