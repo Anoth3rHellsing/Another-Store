@@ -1,4 +1,7 @@
-<!DOCTYPE html>
+import pathlib
+p = pathlib.Path(r'C:/Users/nicol/OneDrive/Documents/ClaudeCode/Another Store/Webtools/TipCalc.html')
+parts = []
+parts.append(r'''<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -79,7 +82,8 @@ input:focus{outline:2px solid rgba(31,134,200,.45);outline-offset:-1px}
 <div class="bubble b1"></div><div class="bubble b2"></div><div class="bubble b3"></div>
 <div class="window">
 <div class="titlebar"><div class="logo">$</div><h1>Tip<b>Calc</b></h1><span class="sub">Calculadora de propinas</span></div>
-
+''')
+parts.append(r'''
 <div class="card">
 <h2>Monto de la cuenta</h2>
 <div class="amount-row"><span class="cur">$</span><input type="number" id="amount" placeholder="0.00" min="0" step="0.01"></div>
@@ -100,7 +104,8 @@ input:focus{outline:2px solid rgba(31,134,200,.45);outline-offset:-1px}
 <button class="plus" id="pplPlus"><span class="shine"></span>+</button>
 </div>
 </div>
-
+''')
+parts.append(r'''
 <div class="card">
 <h2>Resultados</h2>
 <div class="results">
@@ -120,7 +125,8 @@ input:focus{outline:2px solid rgba(31,134,200,.45);outline-offset:-1px}
 <button class="btn btn-green" id="btnClearHist"><span class="shine"></span>Borrar historial</button>
 </div>
 </div>
-
+''')
+parts.append(r'''
 <div class="card">
 <h2>Historial (ultimos 5)</h2>
 <ul class="history-list" id="histList"><li class="history-empty">Sin calculos recientes</li></ul>
@@ -383,3 +389,8 @@ calcular();
 </script>
 </body>
 </html>
+''')
+
+html = "".join(parts)
+p.write_text(html, encoding="utf-8")
+print("DONE", len(html))

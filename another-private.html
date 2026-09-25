@@ -100,6 +100,8 @@ body{min-height:100vh;display:flex;flex-direction:column}
 </head>
 <body>
 
+<audio id="privateMusic" loop preload="auto"><source src="Music/(A.N.O.T.H.E.R.'s Private)Beneath_the_Glossy_Surface.mp3" type="audio/mpeg"></audio>
+
 <div class="bg">
   <div class="stars" id="stars"></div>
   <div class="wave">
@@ -235,6 +237,42 @@ body{min-height:100vh;display:flex;flex-direction:column}
     s.style.opacity=Math.random()*.5+.1;
     c.appendChild(s);
   }
+})();
+
+// Control de música
+(function(){
+  var audio=document.getElementById('privateMusic');
+  if(!audio) return;
+
+  // Crear botón de control
+  var btn=document.createElement('div');
+  btn.className='audio-ctrl';
+  btn.style.cssText='position:fixed;top:20px;right:20px;z-index:100;display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);cursor:pointer;transition:background .2s';
+  btn.innerHTML='<div class="audio-bars paused" id="audioBars" style="display:flex;align-items:end;gap:2px;height:14px"><span style="width:3px;background:#6dd5fa;border-radius:2px;height:3px"></span><span style="width:3px;background:#6dd5fa;border-radius:2px;height:3px"></span><span style="width:3px;background:#6dd5fa;border-radius:2px;height:3px"></span></div><svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,.8)"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>';
+  document.body.appendChild(btn);
+
+  var bars=btn.querySelector('#audioBars');
+  var playing=false;
+
+  // Animación de barras
+  var style=document.createElement('style');
+  style.textContent='@keyframes bar{0%{height:3px}100%{height:14px}} .audio-bars span{animation:bar .8s ease-in-out infinite alternate} .audio-bars span:nth-child(1){animation-delay:0s} .audio-bars span:nth-child(2){animation-delay:.15s} .audio-bars span:nth-child(3){animation-delay:.3s} .audio-bars.paused span{animation:none!important;height:3px!important}';
+  document.head.appendChild(style);
+
+  btn.addEventListener('click',function(){
+    if(playing){
+      audio.pause();
+      bars.classList.add('paused');
+      playing=false;
+    } else {
+      audio.play().catch(function(e){console.log('Audio play failed:',e)});
+      bars.classList.remove('paused');
+      playing=true;
+    }
+  });
+
+  btn.addEventListener('mouseenter',function(){btn.style.background='rgba(255,255,255,.2)'});
+  btn.addEventListener('mouseleave',function(){btn.style.background='rgba(255,255,255,.1)'});
 })();
 </script>
 </body>

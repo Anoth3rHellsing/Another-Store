@@ -3,455 +3,817 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PassForge — Generador de contraseñas Aero Glass</title>
+<title>PassGen - Generador de Contraseñas Seguras</title>
 <style>
-  :root{
-    --cDeep:#07405E; --cInk:#0B5C8A; --cBlue2:#1F86C8; --cGreen2:#4CA22B;
-    --cAmber2:#E08C1E; --cRed2:#C63C22; --Muted:#2C5F7E;
-    --shadow:0 2px 16px rgba(10,58,86,.28);
-  }
-  *{box-sizing:border-box; margin:0; padding:0;}
-  html,body{height:100%;}
-  body{
-    font-family:"Segoe UI",system-ui,sans-serif;
-    color:var(--cDeep);
-    background:
-      linear-gradient(0deg, rgba(151,220,95,.85) 0%, rgba(103,208,196,.82) 18%, rgba(77,187,236,.82) 40%, rgba(149,217,246,.85) 70%, rgba(227,244,253,.89) 100%),
-      linear-gradient(105deg,#E3F4FD 0%, #95D9F6 30%, #4DBBEC 60%, #67D0C4 82%, #97DC5F 100%);
-    background-blend-mode:normal;
-    min-height:100vh;
-    overflow-x:hidden;
-  }
-  /* TopGloss overlay */
-  body::before{
-    content:""; position:fixed; top:0; left:0; right:0; height:170px; pointer-events:none; z-index:0;
-    background:linear-gradient(180deg, rgba(255,255,255,.63) 0%, rgba(255,255,255,.26) 55%, transparent 100%);
-  }
-  /* Bubbles */
-  .bubble{position:fixed; border-radius:50%; pointer-events:none; z-index:0;
-    background:radial-gradient(circle at 35% 30%, #fff 0%, var(--t) 58%, transparent 100%);}
-  .b1{width:300px;height:300px; left:-70px; top:38%; opacity:.30; --t:rgba(111,199,240,.9);}
-  .b2{width:380px;height:380px; right:-90px; top:-110px; opacity:.26; --t:rgba(182,231,122,.9);}
-  .b3{width:180px;height:180px; left:52%; bottom:-60px; opacity:.22; --t:rgba(255,217,122,.9);}
-
-  .window{
-    position:relative; z-index:1; max-width:980px; margin:46px auto; padding:0 24px 60px;
-  }
-  .titlebar{display:flex; align-items:center; gap:12px; height:46px; padding:0 6px;}
-  .titlebar .logo{width:26px;height:26px;border-radius:7px;
-    background:linear-gradient(180deg,#8FD9F7 0%,#39A5DC 49%,#1B7FC0 51%,#39B0E4 100%);
-    border:1px solid rgba(255,255,255,.55); box-shadow:var(--shadow);
-    display:grid;place-items:center;color:#fff;font-size:16px;font-weight:600;}
-  .titlebar h1{font-size:25px; font-weight:300; color:var(--cDeep);}
-  .titlebar h1 b{font-weight:600;}
-  .titlebar .sub{margin-left:auto; font-size:12.5px; color:var(--Muted);}
-
-  .card{
-    background:linear-gradient(180deg, rgba(255,255,255,.93) 0%, rgba(255,255,255,.77) 45%, rgba(235,248,255,.69) 100%);
-    border:1px solid rgba(255,255,255,.5);
-    border-radius:14px; padding:18px; box-shadow:var(--shadow);
-    backdrop-filter:blur(12px);
-    margin-bottom:18px;
-  }
-  h2{font-size:15px; font-weight:600; margin-bottom:10px; color:var(--cDeep);}
-
-  .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:12px;}
-
-  /* Gloss buttons */
-  .btn{
-    position:relative; height:40px; padding:0 22px; border:none; border-radius:9px;
-    font-family:inherit; font-size:13.5px; color:#fff; cursor:pointer; overflow:hidden;
-    box-shadow:var(--shadow), inset 0 0 0 1px rgba(255,255,255,.35);
-    transition:transform .05s, filter .15s;
-  }
-  .btn::before{content:""; position:absolute; inset:0; border-radius:8px; opacity:0;
-    background:rgba(255,255,255,.24); transition:.15s;}
-  .btn:hover::before{opacity:1;}
-  .btn:active{transform:translateY(1px); filter:brightness(.92);}
-  .btn .shine{position:absolute; left:1px; right:1px; top:1px; height:17px; border-radius:8px 8px 0 0;
-    background:linear-gradient(180deg, rgba(255,255,255,.72) 0%, rgba(255,255,255,.22) 48%, transparent 50%); pointer-events:none;}
-  .btn-blue{background:linear-gradient(180deg,#8FD9F7 0%,#39A5DC 49%,#1B7FC0 51%,#39B0E4 100%);}
-  .btn-green{background:linear-gradient(180deg,#CBF08F 0%,#74C23C 49%,#4E9C22 51%,#7FCF43 100%);}
-  .btn-amber{background:linear-gradient(180deg,#FFE6A8 0%,#F0A93A 49%,#D5871B 51%,#F7B950 100%);}
-  .btn-red{background:linear-gradient(180deg,#FFB6A6 0%,#DD5C3E 49%,#B63B22 51%,#E0704F 100%);}
-
-  .btn:disabled{opacity:.45; cursor:default; transform:none;}
-  .btn:disabled .shine{opacity:0;}
-
-  .btn-ghost{
-    height:34px; padding:0 16px; border-radius:8px; border:1px solid rgba(255,255,255,.5);
-    background:rgba(255,255,255,.4); color:var(--cDeep); font-family:inherit; font-size:13px; cursor:pointer; transition:.15s;
-  }
-  .btn-ghost:hover{background:rgba(255,255,255,.67);}
-
-  /* Length slider */
-  .lenrow{display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
-  .lenval{
-    min-width:74px; text-align:center; font-family:Consolas,monospace; font-size:26px; font-weight:600;
-    color:var(--cDeep); background:rgba(255,255,255,.6); border:1px solid rgba(255,255,255,.55);
-    border-radius:10px; padding:4px 10px; box-shadow:var(--shadow);
-  }
-  input[type=range]{
-    flex:1; min-width:200px; height:12px; -webkit-appearance:none; appearance:none; cursor:pointer;
-    border-radius:8px; border:1px solid rgba(255,255,255,.5);
-    background:linear-gradient(180deg, rgba(255,255,255,.75) 0%, rgba(190,226,247,.6) 100%);
-    box-shadow:inset 0 1px 3px rgba(44,95,126,.25);
-  }
-  input[type=range]::-webkit-slider-thumb{
-    -webkit-appearance:none; width:26px; height:26px; border-radius:50%;
-    background:linear-gradient(180deg,#8FD9F7 0%,#39A5DC 49%,#1B7FC0 51%,#39B0E4 100%);
-    border:2px solid rgba(255,255,255,.85); box-shadow:var(--shadow); cursor:grab;
-  }
-  input[type=range]::-moz-range-thumb{
-    width:24px; height:24px; border-radius:50%;
-    background:linear-gradient(180deg,#8FD9F7 0%,#39A5DC 49%,#1B7FC0 51%,#39B0E4 100%);
-    border:2px solid rgba(255,255,255,.85); box-shadow:var(--shadow); cursor:grab;
-  }
-  input[type=range]::-moz-range-track{
-    height:12px; border-radius:8px; border:1px solid rgba(255,255,255,.5);
-    background:linear-gradient(180deg, rgba(255,255,255,.75) 0%, rgba(190,226,247,.6) 100%);
-    box-shadow:inset 0 1px 3px rgba(44,95,126,.25);
-  }
-  input[type=range]:hover::-webkit-slider-thumb{filter:brightness(1.08);}
-  input[type=range]:active::-webkit-slider-thumb{cursor:grabbing; filter:brightness(.94);}
-
-  /* Checkboxes */
-  .opts{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:8px; margin-top:12px;}
-  .chk{display:flex; align-items:center; gap:9px; padding:9px 12px; border-radius:9px;
-    background:rgba(255,255,255,.42); border:1px solid rgba(255,255,255,.5); cursor:pointer;
-    font-size:13.5px; user-select:none; transition:.15s;}
-  .chk:hover{background:rgba(255,255,255,.62);}
-  .chk input{position:absolute; opacity:0; width:1px; height:1px; pointer-events:none;}
-  .chk .box{
-    flex:none; width:20px; height:20px; border-radius:6px; position:relative;
-    border:1px solid rgba(255,255,255,.65); box-shadow:var(--shadow), inset 0 1px 3px rgba(44,95,126,.28);
-    background:linear-gradient(180deg, rgba(255,255,255,.9) 0%, rgba(220,238,250,.75) 100%);
-    transition:.15s;
-  }
-  .chk .box::after{
-    content:""; position:absolute; left:6px; top:2px; width:5px; height:10px;
-    border:solid #fff; border-width:0 3px 3px 0; transform:rotate(42deg) scale(0);
-    transition:.12s; filter:drop-shadow(0 1px 1px rgba(10,58,86,.4));
-  }
-  .chk input:checked + .box{
-    background:linear-gradient(180deg,#8FD9F7 0%,#39A5DC 49%,#1B7FC0 51%,#39B0E4 100%);
-    border-color:rgba(255,255,255,.85);
-  }
-  .chk input:checked + .box::after{transform:rotate(42deg) scale(1);}
-  .chk input:focus-visible + .box{outline:2px solid rgba(31,134,200,.45); outline-offset:1px;}
-  .chk:has(input:disabled){opacity:.55; cursor:default; background:rgba(255,255,255,.3);}
-  .chk .glyph{font-family:Consolas,monospace; color:var(--cInk); font-size:12px; margin-left:auto;}
-
-  /* Password output */
-  .passbox{
-    display:flex; align-items:center; gap:10px; margin-top:4px;
-    background:linear-gradient(180deg, rgba(255,255,255,.95) 0%, rgba(240,249,255,.85) 55%, rgba(224,241,252,.8) 100%);
-    border:1px solid rgba(255,255,255,.7); border-radius:12px; padding:16px 18px;
-    box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.9);
-    position:relative; overflow:hidden;
-  }
-  .passbox::before{content:""; position:absolute; top:0; left:0; right:0; height:6px;
-    background:linear-gradient(180deg, rgba(255,255,255,.75), transparent); pointer-events:none;}
-  .passbox .pass{
-    flex:1; min-height:40px; word-break:break-all; user-select:all;
-    font-family:Consolas,"Courier New",monospace; font-size:24px; font-weight:600;
-    letter-spacing:.5px; color:var(--cDeep); line-height:1.4;
-  }
-  .passbox .pass.placeholder{color:var(--Muted); font-size:14px; font-style:italic; font-weight:400; letter-spacing:0;}
-
-  /* Strength meter */
-  .strength{margin-top:14px;}
-  .strength .meta{display:flex; justify-content:space-between; align-items:baseline; font-size:12.5px; color:var(--Muted); margin-bottom:5px;}
-  .strength .label{font-size:14px; font-weight:600;}
-  .bar{height:14px; border-radius:8px; background:rgba(255,255,255,.35);
-    border:1px solid rgba(255,255,255,.45); overflow:hidden;}
-  .bar .fill{height:100%; width:0%; border-radius:7px; position:relative; transition:width .3s, background .3s;}
-  .bar .fill::after{content:""; position:absolute; top:0; left:0; right:0; height:5px;
-    background:rgba(255,255,255,.55); border-radius:7px 7px 0 0;}
-
-  .status{font-size:12.5px; color:var(--Muted); margin-top:8px; min-height:16px;}
-
-  /* Passphrase chips */
-  .passbox .pass.chips{display:flex; flex-wrap:wrap; gap:8px; font-size:0;}
-  .passbox .chip{
-    display:inline-flex; align-items:center; font-family:Consolas,"Courier New",monospace;
-    font-size:20px; font-weight:600; color:var(--cDeep);
-    background:linear-gradient(180deg, rgba(255,255,255,.95) 0%, rgba(228,242,252,.8) 100%);
-    border:1px solid rgba(255,255,255,.7); border-radius:9px; padding:6px 12px;
-    box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.9); user-select:all;
-  }
-  .passbox .sep{display:inline-flex; align-items:center; align-self:center;
-    font-family:Consolas,monospace; font-size:20px; color:var(--Muted); font-weight:600;
-    user-select:all;}
-
-  @media (max-width:640px){
-    .window{margin:24px auto; padding:0 12px 40px;}
-    .titlebar{height:38px; gap:9px;}
-    .titlebar h1{font-size:20px;}
-    .titlebar .sub{display:none;}
-    .card{padding:14px; border-radius:12px;}
-    .passbox{padding:12px;}
-    .passbox .pass{font-size:18px;}
-    .passbox .chip{font-size:16px; padding:5px 10px;}
-    .passbox .sep{font-size:16px;}
-    .lenval{font-size:20px;}
-    .btn{height:38px; padding:0 18px; font-size:13px;}
-    .opts{grid-template-columns:1fr;}
-  }
-
-  .toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
-    background:rgba(255,255,255,.9); backdrop-filter:blur(10px); color:var(--cDeep);
-    border:1px solid rgba(255,255,255,.6); border-radius:10px; padding:10px 20px;
-    box-shadow:var(--shadow); font-size:13px; opacity:0; pointer-events:none; transition:.25s; z-index:9;}
-  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+/* === Variables CSS del Design Spec Aero Glass === */
+:root{
+ --cDeep:#07405E; --cInk:#0B5C8A; --cSky1:#BFE9FB; --cSky2:#7CCBEE;
+ --cBlue1:#6FC7F0; --cBlue2:#1F86C8; --cGreen1:#B6E77A; --cGreen2:#4CA22B;
+ --cAmber1:#FFD97A; --cAmber2:#E08C1E; --cRed1:#FFA694; --cRed2:#C63C22;
+ --Muted:#2C5F7E;
+ --shadow:0 2px 16px rgba(10,58,86,.28);
+ /* Colores del medidor de fuerza */
+ --strength-weak:#ef4444; --strength-medium:#eab308;
+ --strength-strong:#22c55e; --strength-very-strong:#3b82f6;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%;}
+body{
+ font-family:"Segoe UI",system-ui,sans-serif;
+ color:var(--cDeep);
+ background:
+ linear-gradient(0deg, rgba(151,220,95,.85) 0%, rgba(103,208,196,.82) 18%, rgba(77,187,236,.82) 40%, rgba(149,217,246,.85) 70%, rgba(227,244,253,.89) 100%),
+ linear-gradient(105deg,#E3F4FD 0%, #95D9F6 30%, #4DBBEC 60%, #67D0C4 82%, #97DC5F 100%);
+ background-blend-mode:normal;
+ min-height:100vh;
+ overflow-x:hidden;
+}
+/* TopGloss overlay — simula iluminación superior sobre cristal */
+body::before{
+ content:""; position:fixed; top:0; left:0; right:0; height:170px; pointer-events:none; z-index:0;
+ background:linear-gradient(180deg, rgba(255,255,255,.63) 0%, rgba(255,255,255,.26) 55%, transparent 100%);
+}
+/* Burbujas decorativas asimétricas */
+.bubble{position:fixed; border-radius:50%; pointer-events:none; z-index:0;
+ background:radial-gradient(circle at 35% 30%, #fff 0%, var(--t) 58%, transparent 100%);}
+.b1{width:300px;height:300px; left:-70px; top:38%; opacity:.30; --t:rgba(111,199,240,.9);}
+.b2{width:380px;height:380px; right:-90px; top:-110px; opacity:.26; --t:rgba(182,231,122,.9);}
+.b3{width:180px;height:180px; left:52%; bottom:-60px; opacity:.22; --t:rgba(255,217,122,.9);}
+/* Contenedor principal tipo ventana */
+.window{
+ position:relative; z-index:1; max-width:980px; margin:46px auto; padding:0 24px 60px;
+}
+/* Barra de título con logo glossy */
+.titlebar{display:flex; align-items:center; gap:12px; height:46px; padding:0 6px;}
+.titlebar .logo{width:26px;height:26px;border-radius:7px;
+ background:linear-gradient(180deg,#8FD9F7 0%,#39A5DC 49%,#1B7FC0 51%,#39B0E4 100%);
+ border:1px solid rgba(255,255,255,.55); box-shadow:var(--shadow);
+ display:grid;place-items:center;color:#fff;font-size:14px;font-weight:600;}
+.titlebar h1{font-size:25px; font-weight:300; color:var(--cDeep);}
+.titlebar h1 b{font-weight:600;}
+.titlebar .sub{margin-left:auto; font-size:12.5px; color:var(--Muted);}
+/* Tarjetas glass con blur */
+.card{
+ background:linear-gradient(180deg, rgba(255,255,255,.93) 0%, rgba(255,255,255,.77) 45%, rgba(235,248,255,.69) 100%);
+ border:1px solid rgba(255,255,255,.5);
+ border-radius:14px; padding:18px; box-shadow:var(--shadow);
+ backdrop-filter:blur(12px);
+ margin-bottom:18px;
+}
+h2,h3{font-size:15px; font-weight:600; margin-bottom:10px; color:var(--cDeep);}
+/* Preview de contraseña — card especial glass oscuro */
+.password-preview{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.password-display{
+ flex:1;padding:16px;font-family:Consolas,monospace;font-size:1.25rem;
+ word-break:break-all;border-radius:8px;min-height:56px;display:flex;align-items:center;
+ background:rgba(255,255,255,.55); border:1px solid rgba(255,255,255,.45);
+ box-shadow:inset 0 1px 4px rgba(10,58,86,.15); color:var(--cDeep);
+}
+/* Medidor de fuerza */
+.strength-meter{margin-top:16px;}
+.strength-bar-container{
+ height:10px;border-radius:5px;overflow:hidden;margin-bottom:8px;
+ background:#59FFFFFF; border:1px solid rgba(255,255,255,.4);
+}
+.strength-bar{height:100%;width:0%;transition:width .3s ease,background-color .3s ease;border-radius:5px;}
+.strength-info{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:.9rem;color:var(--cDeep);}
+.strength-feedback{margin-top:8px;font-size:.85rem;color:var(--cAmber2);display:flex;align-items:center;gap:6px;}
+.strength-feedback::before{content:"⚡";font-size:.9rem;}
+/* Tiles glass con barra lateral accent */
+.tile{
+ background:linear-gradient(180deg, rgba(255,255,255,.85) 0%, rgba(255,255,255,.55) 48%, rgba(235,248,255,.45) 52%, rgba(255,255,255,.65) 100%);
+ border:1px solid rgba(255,255,255,.6);
+ border-radius:12px; padding:14px 12px 12px; text-align:center;
+ box-shadow:var(--shadow); backdrop-filter:blur(10px);
+ position:relative; overflow:hidden;
+ display:inline-flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+ min-height:96px; cursor:pointer; transition:.15s;
+}
+.tile:hover{background:linear-gradient(180deg, rgba(255,255,255,.92) 0%, rgba(255,255,255,.65) 48%, rgba(235,248,255,.55) 52%, rgba(255,255,255,.75) 100%);}
+.tile::before{content:""; position:absolute; left:0; right:0; top:0; height:14px;
+ background:linear-gradient(180deg, rgba(255,255,255,.7), transparent); pointer-events:none;}
+.tile::after{content:""; position:absolute; left:0; top:0; bottom:0; width:4px; pointer-events:none;
+ background:linear-gradient(180deg, var(--accent,#1F86C8), rgba(255,255,255,.25)); opacity:.85;}
+/* Icon chip dentro de tiles */
+.tile .ico{
+ width:28px; height:28px; border-radius:8px; display:grid; place-items:center;
+ font-size:14px; line-height:1;
+ background:linear-gradient(180deg, rgba(255,255,255,.9) 0%, rgba(255,255,255,.5) 49%, rgba(226,241,252,.45) 51%, rgba(255,255,255,.7) 100%);
+ border:1px solid rgba(255,255,255,.65);
+ box-shadow:0 1px 6px rgba(10,58,86,.18), inset 0 0 0 1px rgba(255,255,255,.35);
+ position:relative; overflow:hidden;
+}
+.tile .ico::after{content:""; position:absolute; left:1px; right:1px; top:1px; height:9px; border-radius:7px 7px 0 0;
+ background:linear-gradient(180deg, rgba(255,255,255,.75), transparent); pointer-events:none;}
+/* Tabs modo: pills glass */
+.mode-tabs{display:flex;gap:8px;margin-bottom:16px;}
+.mode-tab{
+ padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:500;transition:all .2s;
+ background:#3DFFFFFF; color:var(--cDeep); border:1px solid rgba(255,255,255,.4);
+ backdrop-filter:blur(8px);
+}
+.mode-tab:hover{background:#6BFFFFFF;}
+.mode-tab.active{background:#B8FFFFFF; border-color:#8CFFFFFF; font-weight:600; color:var(--cDeep);}
+/* Botones glossy con hard-stop 49%/51% */
+.btn{
+ position:relative; height:40px; padding:0 22px; border:none; border-radius:9px;
+ font-family:inherit; font-size:13.5px; color:#fff; cursor:pointer; overflow:hidden;
+ box-shadow:var(--shadow), inset 0 0 0 1px rgba(255,255,255,.35);
+ transition:transform .05s, filter .15s; display:inline-flex; align-items:center; gap:8px;
+}
+.btn::before{content:""; position:absolute; inset:0; border-radius:8px; opacity:0;
+ background:rgba(255,255,255,.24); transition:.15s;}
+.btn:hover::before{opacity:1;}
+.btn:active{transform:translateY(1px); filter:brightness(.92);}
+/* Shine interno en botones */
+.btn .shine{position:absolute; left:1px; right:1px; top:1px; height:17px; border-radius:8px 8px 0 0;
+ background:linear-gradient(180deg, rgba(255,255,255,.72) 0%, rgba(255,255,255,.22) 48%, transparent 50%); pointer-events:none;}
+/* Variantes de botones con gradientes específicos */
+.btn-blue{background:linear-gradient(180deg,#8FD9F7 0%,#39A5DC 49%,#1B7FC0 51%,#39B0E4 100%);}
+.btn-green{background:linear-gradient(180deg,#CBF08F 0%,#74C23C 49%,#4E9C22 51%,#7FCF43 100%);}
+.btn-amber{background:linear-gradient(180deg,#FFE6A8 0%,#F0A93A 49%,#D5871B 51%,#F7B950 100%);}
+.btn-red{background:linear-gradient(180deg,#FFB6A6 0%,#DD5C3E 49%,#B63B22 51%,#E0704F 100%);}
+/* Botón ghost semi-transparente */
+.btn-ghost{
+ height:34px; padding:0 16px; border-radius:8px; border:1px solid rgba(255,255,255,.5);
+ background:rgba(255,255,255,.4); color:var(--cDeep); font-family:inherit; font-size:13px; cursor:pointer; transition:.15s;
+}
+.btn-ghost:hover{background:rgba(255,255,255,.67);}
+/* Toggle visibility button */
+.toggle-visibility{padding:0 12px;min-width:48px;}
+/* Fila de acciones */
+.actions-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;}
+/* Opciones grid */
+.options-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:16px;}
+.option-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;cursor:pointer;}
+/* Control de longitud con slider e input numérico */
+.length-control{display:flex;align-items:center;gap:16px;margin-bottom:16px;}
+.length-control label{min-width:80px;font-weight:500;color:var(--cDeep);}
+/* Range input custom glass */
+input[type="range"]{
+ -webkit-appearance:none; appearance:none; flex:1; height:6px; border-radius:3px;
+ background:linear-gradient(180deg, rgba(255,255,255,.7) 0%, rgba(255,255,255,.4) 100%);
+ border:1px solid rgba(255,255,255,.5); outline:none; cursor:pointer;
+}
+input[type="range"]::-webkit-slider-thumb{
+ -webkit-appearance:none; appearance:none; width:20px; height:20px; border-radius:50%;
+ background:linear-gradient(180deg,#8FD9F7 0%,#39A5DC 49%,#1B7FC0 51%,#39B0E4 100%);
+ border:1px solid rgba(255,255,255,.6); box-shadow:var(--shadow); cursor:pointer;
+}
+input[type="range"]::-moz-range-thumb{
+ width:20px; height:20px; border-radius:50%; border:none;
+ background:linear-gradient(180deg,#8FD9F7 0%,#39A5DC 49%,#1B7FC0 51%,#39B0E4 100%);
+ border:1px solid rgba(255,255,255,.6); box-shadow:var(--shadow); cursor:pointer;
+}
+/* Input numérico glass */
+input[type="number"]{
+ width:70px;padding:8px;text-align:center;border-radius:8px;
+ border:1px solid rgba(44,95,126,.30); background:rgba(255,255,255,.70);
+ color:var(--cDeep); font-family:inherit; font-size:13px;
+}
+input[type="number"]:focus{outline:2px solid rgba(31,134,200,.45); outline-offset:-1px;}
+/* Input texto y password glass */
+input[type="text"], input[type="password"]{
+ height:36px; padding:0 12px; border-radius:8px;
+ border:1px solid rgba(44,95,126,.30); background:rgba(255,255,255,.70);
+ color:var(--cDeep); font-family:inherit; font-size:13px;
+}
+input[type="text"]:focus, input[type="password"]:focus{outline:2px solid rgba(31,134,200,.45); outline-offset:-1px;}
+/* Select glass */
+select{
+ padding:8px 12px;border-radius:8px;
+ border:1px solid rgba(44,95,126,.30); background:rgba(255,255,255,.70);
+ color:var(--cDeep); font-family:inherit; font-size:13px;
+}
+select:focus{outline:2px solid rgba(31,134,200,.45); outline-offset:-1px;}
+/* Checkbox custom Aero Glass */
+input[type="checkbox"]{
+ -webkit-appearance:none; appearance:none; width:19px; height:19px; border-radius:5px;
+ background:rgba(255,255,255,.7); border:1px solid rgba(44,95,126,.25);
+ cursor:pointer; position:relative; vertical-align:middle; margin-right:8px; flex-shrink:0;
+}
+input[type="checkbox"]:checked{
+ background:linear-gradient(180deg,#8FD9F7 0%,#39A5DC 49%,#1B7FC0 51%,#39B0E4 100%);
+ border-color:rgba(255,255,255,.6);
+}
+input[type="checkbox"]:checked::after{
+ content:"\2713"; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+ color:#fff; font-size:12px; font-weight:700;
+}
+input[type="checkbox"]:hover{border-color:var(--cBlue2);}
+/* Controles de passphrase */
+.passphrase-options{display:none;}
+.passphrase-options.visible{display:block;}
+.passphrase-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:16px;}
+.passphrase-controls label{display:flex;flex-direction:column;gap:6px;font-size:.9rem;color:var(--cDeep);}
+/* Sección de historial */
+.history-section{margin-top:16px;}
+.history-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.history-warning{
+ font-size:.8rem;color:var(--Muted);margin-bottom:12px;padding:8px 12px;border-radius:6px;
+ background:rgba(255,255,255,.5); border:1px solid rgba(255,255,255,.4);
+ backdrop-filter:blur(8px);
+}
+.history-list{list-style:none;max-height:200px;overflow-y:auto;}
+.history-item{
+ display:flex;justify-content:space-between;align-items:center;
+ padding:10px 12px;border-radius:8px;margin-bottom:6px;
+ font-family:Consolas,monospace;font-size:.9rem;
+ background:linear-gradient(180deg, rgba(255,255,255,.75) 0%, rgba(255,255,255,.5) 100%);
+ border:1px solid rgba(255,255,255,.5); backdrop-filter:blur(8px);
+ color:var(--cDeep);
+}
+.history-item-actions{display:flex;align-items:center;gap:8px;}
+.history-empty{text-align:center;padding:20px;opacity:.7;color:var(--Muted);}
+/* Toast notifications con backdrop-filter y animación slideUp */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:1000;display:flex;flex-direction:column;gap:8px;}
+.toast{
+ padding:14px 20px;border-radius:10px;font-size:.95rem;
+ animation:slideUp .25s ease,toastOut .3s ease 2.7s forwards;max-width:350px;
+ background:rgba(255,255,255,.9); backdrop-filter:blur(10px);
+ color:var(--cDeep); border:1px solid rgba(255,255,255,.6);
+ box-shadow:var(--shadow);
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-10px)}}
+/* Responsive para móvil */
+@media (max-width:640px){
+ .window{margin:24px auto 40px; padding:0 12px 40px;}
+ .titlebar h1{font-size:21px;}
+ .titlebar .sub{display:none;}
+ .card{padding:16px; margin-bottom:12px;}
+ .options-grid{grid-template-columns:1fr;}
+ .actions-row{flex-direction:column;}
+ .actions-row .btn{width:100%; justify-content:center;}
+ .password-display{font-size:1rem; padding:12px;}
+ .mode-tabs{flex-wrap:wrap;}
+ .mode-tab{flex:1; text-align:center;}
+ .length-control{flex-wrap:wrap;}
+ .length-control label{min-width:auto;}
+ .history-item{flex-direction:column; align-items:flex-start; gap:6px;}
+ .toast-container{left:16px; right:16px; bottom:16px;}
+ .toast{max-width:100%;}
+}
 </style>
 </head>
 <body>
 <div class="bubble b1"></div><div class="bubble b2"></div><div class="bubble b3"></div>
-
 <div class="window">
-  <div class="titlebar">
-    <div class="logo">*</div>
-    <h1>Pass<b>Forge</b></h1>
-    <span class="sub">Generador de contraseñas · Aero Glass · 100% local</span>
-  </div>
-
-  <div class="card">
-    <h2>1 · Opciones</h2>
-
-    <div class="lenrow">
-      <label for="len" style="font-size:13.5px;">Longitud:</label>
-      <input type="range" id="len" min="8" max="64" value="16" step="1">
-      <div class="lenval" id="lenval">16</div>
-    </div>
-
-    <div class="opts" id="opts">
-      <label class="chk"><input type="checkbox" id="cUpper" checked><span class="box"></span> Mayúsculas <span class="glyph">A-Z</span></label>
-      <label class="chk"><input type="checkbox" id="cLower" checked><span class="box"></span> Minúsculas <span class="glyph">a-z</span></label>
-      <label class="chk"><input type="checkbox" id="cNums" checked><span class="box"></span> Números <span class="glyph">0-9</span></label>
-      <label class="chk"><input type="checkbox" id="cSyms" checked><span class="box"></span> Símbolos <span class="glyph">!@#$…</span></label>
-      <label class="chk"><input type="checkbox" id="cAmb"><span class="box"></span> Excluir ambiguos <span class="glyph">l 1 I O 0</span></label>
-      <label class="chk"><input type="checkbox" id="cPhrase"><span class="box"></span> Frase de paso <span class="glyph">4-8 palabras</span></label>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>2 · Tu contraseña</h2>
-    <div class="passbox">
-      <div class="pass placeholder" id="pass">Haz clic en «Generar» para crear una contraseña…</div>
-    </div>
-
-    <div class="row">
-      <button id="btnGen" class="btn btn-blue"><span class="shine"></span>Generar</button>
-      <button id="btnCopy" class="btn btn-green" disabled><span class="shine"></span>Copiar</button>
-      <button id="btnRegen" class="btn btn-amber" disabled><span class="shine"></span>Regenerar</button>
-    </div>
-
-    <div class="strength">
-      <div class="meta">
-        <span>Entropía: <b id="bits">—</b> bits</span>
-        <span class="label" id="strengthLabel">—</span>
-      </div>
-      <div class="bar"><div class="fill" id="strengthFill"></div></div>
-    </div>
-    <div class="status" id="status"></div>
-  </div>
+ <div class="titlebar">
+ <div class="logo">P</div>
+ <h1>Pass<b>Gen</b></h1>
+ <span class="sub">Generador seguro de contraseñas · Aero Glass</span>
+ </div>
+<div class="card">
+<div class="mode-tabs">
+<div class="mode-tab active" data-mode="password" onclick="switchMode('password')">Contraseña</div>
+<div class="mode-tab" data-mode="passphrase" onclick="switchMode('passphrase')">Frase de paso</div>
 </div>
-
-<div id="toast" class="toast"></div>
-
+<div class="password-preview">
+<div class="password-display" id="passwordDisplay">Genera una contraseña para comenzar</div>
+<button class="btn btn-ghost toggle-visibility" onclick="toggleVisibility()" title="Mostrar/Ocultar"><span id="visibilityIcon">👁️</span></button>
+</div>
+<div class="strength-meter">
+<div class="strength-bar-container"><div class="strength-bar" id="strengthBar"></div></div>
+<div class="strength-info"><span id="strengthText">Sin generar</span><span id="crackTime">-</span></div>
+<div class="strength-feedback" id="strengthFeedback"></div>
+</div>
+<div class="actions-row">
+<button class="btn btn-blue" onclick="generate()"><span class="shine"></span>🔄 Generar</button>
+<button class="btn btn-green" onclick="copyPassword()"><span class="shine"></span>📋 Copiar</button>
+</div>
+</div>
+<div class="card" id="passwordOptions">
+<h3>Opciones de Contraseña</h3>
+<div class="length-control">
+<label for="lengthSlider">Longitud:</label>
+<input type="range" id="lengthSlider" min="4" max="128" value="16" oninput="syncLength(this.value)">
+<input type="number" id="lengthInput" min="4" max="128" value="16" oninput="syncLength(this.value)">
+</div>
+<div class="options-grid">
+<label class="option-item"><input type="checkbox" id="optUppercase" checked onchange="updateGeneration()"><span>Mayúsculas (A-Z)</span></label>
+<label class="option-item"><input type="checkbox" id="optLowercase" checked onchange="updateGeneration()"><span>Minúsculas (a-z)</span></label>
+<label class="option-item"><input type="checkbox" id="optNumbers" checked onchange="updateGeneration()"><span>Números (0-9)</span></label>
+<label class="option-item"><input type="checkbox" id="optSymbols" checked onchange="updateGeneration()"><span>Símbolos (!@#$...)</span></label>
+<label class="option-item"><input type="checkbox" id="optExtended" onchange="updateGeneration()"><span>Caracteres extendidos</span></label>
+<label class="option-item"><input type="checkbox" id="optExcludeAmbiguous" onchange="updateGeneration()"><span>Excluir ambiguos (0O, 1lI)</span></label>
+</div>
+</div>
+<div class="card passphrase-options" id="passphraseOptions">
+<h3>Opciones de Frase de Paso</h3>
+<div class="passphrase-controls">
+<label>Número de palabras:<input type="number" id="wordCount" min="3" max="8" value="4" onchange="updateGeneration()"></label>
+<label>Separador:<select id="separator" onchange="updateGeneration()"><option value="-">Guion (-)</option><option value=" ">Espacio</option><option value=".">Punto (.)</option><option value="_">Guion bajo (_)</option><option value="random">Número aleatorio</option></select></label>
+<label class="option-item" style="flex-direction:row;align-items:center"><input type="checkbox" id="capitalizeWords" checked onchange="updateGeneration()"><span>Capitalizar primeras letras</span></label>
+</div>
+</div>
+<div class="card">
+<div class="history-section">
+<div class="history-header"><h3>Historial Reciente</h3><button class="btn btn-red" onclick="clearHistory()" style="padding:8px 16px;font-size:.85rem"><span class="shine"></span>🗑️ Borrar</button></div>
+<div class="history-warning">⚠️ Advertencia: Las contraseñas se guardan localmente en tu navegador. Borra el historial regularmente y nunca compartas este dispositivo sin limpiarlo.</div>
+<ul class="history-list" id="historyList"><li class="history-empty">No hay contraseñas en el historial</li></ul>
+</div>
+</div>
+</div>
+<div class="toast-container" id="toastContainer"></div>
 <script>
-const $ = id => document.getElementById(id);
-const len = $('len'), lenval = $('lenval');
-const cUpper = $('cUpper'), cLower = $('cLower'), cNums = $('cNums'), cSyms = $('cSyms'),
-      cAmb = $('cAmb'), cPhrase = $('cPhrase');
-const passEl = $('pass'), bitsEl = $('bits'), labelEl = $('strengthLabel'), fillEl = $('strengthFill');
-const statusEl = $('status');
+// ============================================
+// ESTADO DE LA APLICACIÓN
+// ============================================
+let currentMode = 'password';
+let currentPassword = '';
+let isPasswordVisible = true;
+const HISTORY_KEY = 'passgen_history';
+const MAX_HISTORY = 10;
 
-const SETS = {
-  upper: 'ABCDEFGHJKLMNPQRSTUVWXYZ',
-  lower: 'abcdefghijkmnpqrstuvwxyz',
-  nums:  '23456789',
-  syms:  '!@#$%^&*-_=+?.,:;'
+// ============================================
+// DICCIONARIO DE PALABRAS (~500 palabras español/inglés)
+// ============================================
+const wordDictionary = [
+"casa","perro","gato","mesa","silla","libro","puerta","ventana","jardin","flor",
+"arbol","sol","luna","estrella","mar","rio","montana","cielo","nube","lluvia",
+"viento","fuego","tierra","agua","piedra","camino","puente","torre","castillo","bosque",
+"playa","campo","ciudad","pueblo","calle","plaza","parque","escuela","hospital","tienda",
+"mercado","iglesia","museo","teatro","cine","hotel","restaurante","cafe","panaderia","farmacia",
+"coche","tren","avion","barco","bicicleta","moto","autobus","taxi","metro","camion",
+"ordenador","telefono","reloj","llave","mapa","carta","sobre","papel","lapiz","pluma",
+"cuaderno","agenda","calendario","foto","camara","musica","guitarra","piano","tambor","flauta",
+"comida","fruta","verdura","carne","pescado","pan","leche","queso","huevo","arroz",
+"pasta","sopa","ensalada","postre","dulce","chocolate","cafe","te","zumo","vino",
+"amigo","familia","padre","madre","hermano","hermana","hijo","hija","abuelo","abuela",
+"nino","nina","hombre","mujer","persona","gente","vecino","doctor","maestro","artista",
+"house","dog","cat","table","chair","book","door","window","garden","flower",
+"tree","sun","moon","star","sea","river","mountain","sky","cloud","rain",
+"wind","fire","earth","water","stone","road","bridge","tower","castle","forest",
+"beach","field","city","town","street","square","park","school","hospital","store",
+"market","church","museum","theater","cinema","hotel","restaurant","cafe","bakery","pharmacy",
+"car","train","plane","boat","bicycle","motorcycle","bus","taxi","subway","truck",
+"computer","phone","watch","key","map","letter","envelope","paper","pencil","pen",
+"notebook","diary","calendar","photo","camera","music","guitar","piano","drum","flute",
+"food","fruit","vegetable","meat","fish","bread","milk","cheese","egg","rice",
+"pasta","soup","salad","dessert","candy","chocolate","coffee","tea","juice","wine",
+"friend","family","father","mother","brother","sister","son","daughter","grandfather","grandmother",
+"child","girl","man","woman","person","people","neighbor","doctor","teacher","artist",
+"rojo","azul","verde","amarillo","blanco","negro","gris","rosa","naranja","morado",
+"red","blue","green","yellow","white","black","gray","pink","orange","purple",
+"grande","pequeno","alto","bajo","largo","corto","fuerte","rapido","lento","suave",
+"big","small","tall","short","long","strong","fast","slow","soft","bright",
+"primavera","verano","otono","invierno","dia","noche","manana","tarde","hora","minuto",
+"spring","summer","autumn","winter","day","night","morning","afternoon","hour","minute",
+"feliz","triste","enojado","cansado","alegre","tranquilo","nervioso","valiente","sabio","amable",
+"happy","sad","angry","tired","joyful","calm","brave","wise","kind","gentle",
+"correr","saltar","nadar","volar","cantar","bailar","leer","escribir","dibujar","pintar",
+"run","jump","swim","fly","sing","dance","read","write","draw","paint",
+"amor","paz","libertad","justicia","verdad","belleza","esperanza","sueno","vida","muerte",
+"love","peace","freedom","justice","truth","beauty","hope","dream","life","death",
+"tigre","leon","aguila","serpiente","delfin","ballena","lobo","oso","zorro","conejo",
+"tiger","lion","eagle","snake","dolphin","whale","wolf","bear","fox","rabbit",
+"diamante","oro","plata","hierro","cobre","cristal","madera","seda","algodon","lana",
+"diamond","gold","silver","iron","copper","crystal","wood","silk","cotton","wool",
+"planeta","galaxia","universo","cometa","asteroide","satelite","cohete","nave","espacio","orbita",
+"planet","galaxy","universe","comet","asteroid","satellite","rocket","ship","space","orbit",
+"codigo","datos","red","senal","pixel","robot","chip","sensor","laser","radar",
+"code","data","network","signal","pixel","robot","chip","sensor","laser","radar",
+"jardin","huerto","semilla","raiz","hoja","rama","tronco","cosecha","siembra","floresta",
+"garden","orchard","seed","root","leaf","branch","trunk","harvest","sowing","grove",
+"oceano","isla","volcan","desierto","selva","pantano","cueva","acantilado","cascada","arrecife",
+"ocean","island","volcano","desert","jungle","swamp","cave","cliff","waterfall","reef",
+"martillo","destornillador","llave","sierra","taladro","nivel","cinta","regla","compas","escuadra",
+"hammer","screwdriver","wrench","saw","drill","level","tape","ruler","compass","square",
+"camisa","pantalon","zapato","sombrero","abrigo","guante","bufanda","cinturon","corbata","vestido",
+"shirt","pants","shoe","hat","coat","glove","scarf","belt","tie","dress",
+"manzana","platano","uva","limon","pera","melon","sandia","cereza","fresa","durazno",
+"apple","banana","grape","lemon","pear","melon","watermelon","cherry","strawberry","peach",
+"aguila","halcon","buho","loro","canario","gorrion","paloma","cisne","pavo","gallina",
+"falcon","owl","parrot","canary","sparrow","pigeon","swan","turkey","chicken","hawk",
+"espada","escudo","lanza","arco","flecha","casco","armadura","trono","corona","cetro",
+"sword","shield","spear","bow","arrow","helmet","armor","throne","crown","scepter",
+"medico","abogado","ingeniero","arquitecto","cientifico","piloto","capitan","soldado","bombero","policia",
+"lawyer","engineer","architect","scientist","pilot","captain","soldier","firefighter","police","nurse",
+"aventura","misterio","secreto","tesoro","peligro","viaje","destino","magia","leyenda","historia",
+"adventure","mystery","secret","treasure","danger","journey","destiny","magic","legend","story"
+];
+
+// ============================================
+// CONJUNTOS DE CARACTERES
+// ============================================
+const CHARSETS = {
+uppercase: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+lowercase: 'abcdefghijklmnopqrstuvwxyz',
+numbers: '0123456789',
+symbols: '!@#$%^&*()_+-=[]{}|;:,.<>?/',
+extended: '~`¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ',
+ambiguous: '0O1lI|'
 };
-const AMB = { upper:'ILO', lower:'ilo', nums:'01' };
 
-const WORDS = ['casa','cielo','perro','gato','monte','rio','sol','luna','estrella','fuego','agua','tierra',
-'vento','nube','lluvia','nieve','flor','arbol','bosque','campo','playa','mar','isla','barco','vela','red',
-'camino','puente','puerta','llave','silla','mesa','lampara','libro','pluma','papel','cuadro','musica',
-'canto','baile','risa','sueno','noche','dia','manana','tarde','primavera','verano','otono','invierno',
-'pan','vino','miel','fruta','manzana','naranja','limon','fresa','uva','trigo','maiz','cafe',
-'leche','queso','piedra','arena','oro','plata','cobre','hierro','cristal','espejo','campana','cuerda',
-'reloj','brujula','mapa','carta','sello','moneda','tesoro','corazon','alma','mente','fuerza',
-'valor','fe','luz','sombra','eco','voz','palabra','letra','numero','color','verde','azul',
-'rojo','blanco','negro','gris','purpura','ambar','perla','coral','jade','rubi','roble','pino',
-'cedro','hierba','musgo','helecho','colina','valle','lago','fuente','cumbre','gruta','roca','semilla',
-'cuervo','paloma','gaviota','golondrina','aguila','halcon','ciervo','zorro','conejo','liebre','tortuga','delfin'];
-
-function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show');
-  clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2200); }
-
-/* Cryptographic random integer in [0, max) without modulo bias */
-function randInt(max){
-  if(max <= 0) return 0;
-  const limit = Math.floor(0xFFFFFFFF / max) * max;
-  const buf = new Uint32Array(1);
-  do { crypto.getRandomValues(buf); } while(buf[0] >= limit);
-  return buf[0] % max;
+// ============================================
+// GENERACIÓN SEGURA CON crypto.getRandomValues
+// ============================================
+function secureRandom(max) {
+const array = new Uint32Array(1);
+crypto.getRandomValues(array);
+return array[0] % max;
 }
 
-function buildPool(){
-  let pool = '', groups = [];
-  const amb = cAmb.checked;
-  const add = (name, set) => {
-    const filtered = amb ? [...set].filter(ch => !AMB[name].includes(ch)).join('') : set;
-    if(filtered){ pool += filtered; groups.push(filtered); }
-  };
-  if(cUpper.checked) add('upper', SETS.upper);
-  if(cLower.checked) add('lower', SETS.lower);
-  if(cNums.checked)  add('nums',  SETS.nums);
-  if(cSyms.checked)  add('syms',  SETS.syms);
-  return { pool, groups };
+function secureShuffle(arr) {
+const result = [...arr];
+for (let i = result.length - 1; i > 0; i--) {
+const j = secureRandom(i + 1);
+[result[i], result[j]] = [result[j], result[i]];
+}
+return result;
 }
 
-function genPassword(n){
-  const { pool, groups } = buildPool();
-  if(!pool) return null;
-  let pw = '';
-  while(pw.length < n){
-    const ch = pool[randInt(pool.length)];
-    if(ch === pw[pw.length - 1]) continue; /* evita consecutivos idénticos */
-    pw += ch;
-  }
-  /* Garantiza al menos un carácter de cada grupo activo */
-  for(const g of groups){
-    if(![...pw].some(ch => g.includes(ch))){
-      for(let tries = 0; tries < 50; tries++){
-        const idx = randInt(n);
-        const ch = g[randInt(g.length)];
-        const prevOk = idx === 0 || pw[idx-1] !== ch;
-        const nextOk = idx === n-1 || pw[idx+1] !== ch;
-        if(prevOk && nextOk){ pw = pw.slice(0, idx) + ch + pw.slice(idx + 1); break; }
-      }
-    }
-  }
-  return pw;
+// ============================================
+// GENERADOR DE CONTRASEÑAS
+// ============================================
+function generatePassword() {
+const length = parseInt(document.getElementById('lengthSlider').value);
+const useUpper = document.getElementById('optUppercase').checked;
+const useLower = document.getElementById('optLowercase').checked;
+const useNumbers = document.getElementById('optNumbers').checked;
+const useSymbols = document.getElementById('optSymbols').checked;
+const useExtended = document.getElementById('optExtended').checked;
+const excludeAmbiguous = document.getElementById('optExcludeAmbiguous').checked;
+
+// Construir charset según opciones
+let charset = '';
+if (useUpper) charset += CHARSETS.uppercase;
+if (useLower) charset += CHARSETS.lowercase;
+if (useNumbers) charset += CHARSETS.numbers;
+if (useSymbols) charset += CHARSETS.symbols;
+if (useExtended) charset += CHARSETS.extended;
+
+// Excluir ambiguos si se solicita
+if (excludeAmbiguous) {
+charset = charset.split('').filter(c => !CHARSETS.ambiguous.includes(c)).join('');
 }
 
-function genPassphrase(nWords){
-  const seps = ['-', '-', '-', '_'];
-  const words = [];
-  let last = '';
-  for(let i = 0; i < nWords; i++){
-    let w;
-    do { w = WORDS[randInt(WORDS.length)]; } while(w === last);
-    words.push(w);
-    last = w;
-  }
-  return words.join(seps[randInt(seps.length)]);
+// Validar que haya al menos un tipo seleccionado
+if (charset.length === 0) {
+showToast('Selecciona al menos un tipo de carácter', 'warning');
+return '';
 }
 
-function strengthFromBits(bits, length){
-  let label, color, pct;
-  if(bits < 28)      { label='Muy débil'; color='#C63C22'; pct=12; }
-  else if(bits < 36) { label='Débil';     color='#E08C1E'; pct=32; }
-  else if(bits < 60) { label='Media';     color='#E0C01E'; pct=55; }
-  else if(bits < 100){ label='Fuerte';    color='#4CA22B'; pct=78; }
-  else               { label='Muy fuerte';color='#2E9C6A'; pct=100; }
-  if(length < 12 && bits >= 36) { label = 'Débil'; color = '#E08C1E'; pct = 32; }
-  return { label, color, pct };
+// Generar contraseña asegurando al menos un carácter de cada tipo seleccionado
+let password = [];
+const requiredChars = [];
+if (useUpper) requiredChars.push(CHARSETS.uppercase);
+if (useLower) requiredChars.push(CHARSETS.lowercase);
+if (useNumbers) requiredChars.push(CHARSETS.numbers);
+if (useSymbols) requiredChars.push(CHARSETS.symbols);
+if (useExtended) requiredChars.push(CHARSETS.extended);
+
+// Añadir al menos uno de cada tipo requerido
+for (const reqCharset of requiredChars) {
+let filteredCharset = reqCharset;
+if (excludeAmbiguous) {
+filteredCharset = reqCharset.split('').filter(c => !CHARSETS.ambiguous.includes(c)).join('');
+}
+if (filteredCharset.length > 0) {
+password.push(filteredCharset[secureRandom(filteredCharset.length)]);
+}
 }
 
-function updateMeter(text){
-  if(!text){ bitsEl.textContent = '—'; labelEl.textContent = '—';
-    fillEl.style.width = '0%'; fillEl.style.background = ''; return; }
-  let bitsVal;
-  if(cPhrase.checked){
-    const n = text.split(/[-_]/).filter(Boolean).length;
-    bitsVal = n * Math.log2(WORDS.length) + 2; /* +2 bits por separador aleatorio */
-  } else {
-    bitsVal = text.length * Math.log2(buildPool().pool.length);
-  }
-  const s = strengthFromBits(bitsVal, text.length);
-  bitsEl.textContent = bitsVal.toFixed(0);
-  labelEl.textContent = s.label;
-  labelEl.style.color = s.color;
-  fillEl.style.width = s.pct + '%';
-  fillEl.style.background = `linear-gradient(180deg, ${s.color}CC 0%, ${s.color} 49%, ${s.color}EE 51%, ${s.color} 100%)`;
-  return bitsVal;
+// Completar el resto de la longitud
+while (password.length < length) {
+password.push(charset[secureRandom(charset.length)]);
 }
 
-function generate(){
-  if(cPhrase.checked){
-    const n = randInt(5) + 4; /* 4-8 palabras */
-    const pw = genPassphrase(n);
-    show(pw, `Frase de paso con ${n} palabras de una lista de ${WORDS.length} · aleatoriedad criptográfica`);
-  } else {
-    if(!cUpper.checked && !cLower.checked && !cNums.checked && !cSyms.checked){
-      toast('Activa al menos un tipo de carácter');
-      return;
-    }
-    const pw = genPassword(len.value);
-    if(!pw){ toast('Sin caracteres disponibles'); return; }
-    const { pool } = buildPool();
-    show(pw, `${pw.length} caracteres · alfabeto de ${pool.length} símbolos · aleatoriedad criptográfica`);
-  }
+// Mezclar para evitar patrones predecibles
+password = secureShuffle(password);
+return password.join('');
 }
 
-function show(pw, note){
-  if(cPhrase.checked){
-    /* Presentación en chips; textContent conserva el valor exacto (palabras + separadores) */
-    passEl.classList.add('chips');
-    passEl.textContent = '';
-    pw.split(/([-_])/).forEach(part => {
-      const s = document.createElement('span');
-      if(part === '-' || part === '_'){ s.className = 'sep'; s.textContent = part; }
-      else if(part){ s.className = 'chip'; s.textContent = part; }
-      passEl.appendChild(s);
-    });
-  } else {
-    passEl.classList.remove('chips');
-    passEl.textContent = pw;
-  }
-  passEl.classList.remove('placeholder');
-  $('btnCopy').disabled = $('btnRegen').disabled = false;
-  updateMeter(pw);
-  statusEl.textContent = note;
+// ============================================
+// GENERADOR DE PASSPHRASES
+// ============================================
+function generatePassphrase() {
+const wordCount = parseInt(document.getElementById('wordCount').value);
+const separatorType = document.getElementById('separator').value;
+const capitalize = document.getElementById('capitalizeWords').checked;
+
+const words = [];
+for (let i = 0; i < wordCount; i++) {
+let word = wordDictionary[secureRandom(wordDictionary.length)];
+if (capitalize) {
+word = word.charAt(0).toUpperCase() + word.slice(1);
+}
+words.push(word);
 }
 
-/* Eventos */
-len.addEventListener('input', () => lenval.textContent = len.value);
+// Determinar separador
+let separator = separatorType;
+if (separatorType === 'random') {
+const randomSeparators = ['-', '_', '.', '!', '@', '#', String(secureRandom(10))];
+separator = randomSeparators[secureRandom(randomSeparators.length)];
+}
 
-document.querySelectorAll('#opts input').forEach(chk => {
-  chk.addEventListener('change', () => {
-    if(chk === cPhrase && chk.checked){
-      document.querySelectorAll('#cUpper,#cLower,#cNums,#cSyms,#cAmb').forEach(c => c.disabled = true);
-      statusEl.textContent = 'Modo frase de paso: 4 a 8 palabras comunes en español.';
-    } else if(chk === cPhrase && !chk.checked){
-      document.querySelectorAll('#cUpper,#cLower,#cNums,#cSyms,#cAmb').forEach(c => c.disabled = false);
-      statusEl.textContent = '';
-    }
-  });
-});
+return words.join(separator);
+}
 
-$('btnGen').addEventListener('click', generate);
-$('btnRegen').addEventListener('click', generate);
+// ============================================
+// MEDIDOR DE FUERZA
+// ============================================
+function calculateStrength(password) {
+if (!password || password.length === 0) return { score: 0, level: '', color: '', time: '', feedback: '' };
 
-$('btnCopy').addEventListener('click', async () => {
-  try{
-    await navigator.clipboard.writeText(passEl.textContent);
-    toast('Contraseña copiada al portapapeles ✓');
-  }catch(e){
-    /* Fallback para contextos sin Clipboard API */
-    const ta = document.createElement('textarea');
-    ta.value = passEl.textContent; document.body.appendChild(ta);
-    ta.select(); document.execCommand('copy'); ta.remove();
-    toast('Contraseña copiada al portapapeles ✓');
-  }
-});
+let score = 0;
+const len = password.length;
 
-/* Genera una al cargar */
+// Puntuación por longitud
+if (len >= 8) score += 1;
+if (len >= 12) score += 1;
+if (len >= 16) score += 1;
+if (len >= 20) score += 1;
+if (len >= 24) score += 1;
+
+// Puntuación por variedad de caracteres
+const hasLower = /[a-z]/.test(password);
+const hasUpper = /[A-Z]/.test(password);
+const hasNumber = /[0-9]/.test(password);
+const hasSymbol = /[^a-zA-Z0-9]/.test(password);
+const hasExtended = /[^\x00-\x7F]/.test(password);
+
+if (hasLower) score += 1;
+if (hasUpper) score += 1;
+if (hasNumber) score += 1;
+if (hasSymbol) score += 1;
+if (hasExtended) score += 1;
+
+// Penalizar patrones comunes
+if (/^[a-z]+$/i.test(password)) score -= 1;
+if (/^[0-9]+$/.test(password)) score -= 2;
+if (/(.)\1{2,}/.test(password)) score -= 1;
+if (/^(123|abc|qwerty|password)/i.test(password)) score -= 2;
+
+// Calcular nivel
+let level, color, time, feedback;
+const feedbackItems = [];
+
+if (score <= 3) {
+level = 'Débil';
+color = 'var(--strength-weak)';
+time = 'Segundos a minutos';
+if (len < 8) feedbackItems.push('Aumenta la longitud a mínimo 8 caracteres');
+if (!hasSymbol) feedbackItems.push('Añade símbolos especiales');
+if (!hasNumber) feedbackItems.push('Incluye números');
+if (!hasUpper || !hasLower) feedbackItems.push('Combina mayúsculas y minúsculas');
+} else if (score <= 5) {
+level = 'Media';
+color = 'var(--strength-medium)';
+time = 'Horas a días';
+if (len < 12) feedbackItems.push('Considera aumentar a 12+ caracteres');
+if (!hasSymbol) feedbackItems.push('Añade símbolos para mayor seguridad');
+} else if (score <= 7) {
+level = 'Fuerte';
+color = 'var(--strength-strong)';
+time = 'Meses a años';
+if (len < 16) feedbackItems.push('Excelente, considera 16+ para máxima seguridad');
+} else {
+level = 'Muy fuerte';
+color = 'var(--strength-very-strong)';
+time = 'Siglos o más';
+feedbackItems.push('Contraseña excelente');
+}
+
+feedback = feedbackItems.length > 0 ? feedbackItems.join('. ') + '.' : '';
+
+return { score, level, color, time, feedback };
+}
+
+function updateStrengthMeter(password) {
+const strength = calculateStrength(password);
+const bar = document.getElementById('strengthBar');
+const text = document.getElementById('strengthText');
+const crackTime = document.getElementById('crackTime');
+const feedback = document.getElementById('strengthFeedback');
+
+// Calcular porcentaje basado en score (max ~10)
+const percentage = Math.min(100, Math.max(0, (strength.score / 10) * 100));
+
+bar.style.width = percentage + '%';
+bar.style.backgroundColor = strength.color;
+text.textContent = strength.level || 'Sin generar';
+text.style.color = strength.color;
+crackTime.textContent = strength.time || '-';
+feedback.textContent = strength.feedback;
+}
+
+// ============================================
+// FUNCIONES PRINCIPALES
+// ============================================
+function generate() {
+if (currentMode === 'password') {
+currentPassword = generatePassword();
+} else {
+currentPassword = generatePassphrase();
+}
+
+if (currentPassword) {
+updateDisplay();
+updateStrengthMeter(currentPassword);
+addToHistory(currentPassword);
+}
+}
+
+function updateGeneration() {
+// Solo regenerar automáticamente si ya hay una contraseña generada
+if (currentPassword && currentPassword !== 'Genera una contraseña para comenzar') {
 generate();
+}
+}
+
+function updateDisplay() {
+const display = document.getElementById('passwordDisplay');
+if (isPasswordVisible) {
+display.textContent = currentPassword;
+} else {
+display.textContent = '•'.repeat(Math.min(currentPassword.length, 30));
+}
+}
+
+function toggleVisibility() {
+isPasswordVisible = !isPasswordVisible;
+document.getElementById('visibilityIcon').textContent = isPasswordVisible ? '👁️' : '🙈';
+updateDisplay();
+}
+
+function switchMode(mode) {
+currentMode = mode;
+
+// Actualizar tabs
+document.querySelectorAll('.mode-tab').forEach(tab => {
+tab.classList.toggle('active', tab.dataset.mode === mode);
+});
+
+// Mostrar/ocultar opciones correspondientes
+document.getElementById('passwordOptions').style.display = mode === 'password' ? 'block' : 'none';
+document.getElementById('passphraseOptions').classList.toggle('visible', mode === 'passphrase');
+
+// Limpiar contraseña actual
+currentPassword = '';
+document.getElementById('passwordDisplay').textContent = 'Genera una nueva para comenzar';
+document.getElementById('strengthBar').style.width = '0%';
+document.getElementById('strengthText').textContent = 'Sin generar';
+document.getElementById('strengthText').style.color = '';
+document.getElementById('crackTime').textContent = '-';
+document.getElementById('strengthFeedback').textContent = '';
+}
+
+// ============================================
+// COPIAR AL PORTAPAPELES
+// ============================================
+async function copyPassword() {
+if (!currentPassword || currentPassword === 'Genera una contraseña para comenzar') {
+showToast('Primero genera una contraseña', 'warning');
+return;
+}
+
+try {
+await navigator.clipboard.writeText(currentPassword);
+showToast('Contraseña copiada al portapapeles', 'success');
+} catch (err) {
+// Fallback para navegadores antiguos
+const textarea = document.createElement('textarea');
+textarea.value = currentPassword;
+textarea.style.position = 'fixed';
+textarea.style.opacity = '0';
+document.body.appendChild(textarea);
+textarea.select();
+try {
+document.execCommand('copy');
+showToast('Contraseña copiada al portapapeles', 'success');
+} catch (e) {
+showToast('Error al copiar. Copia manualmente.', 'error');
+}
+document.body.removeChild(textarea);
+}
+}
+
+// ============================================
+// HISTORIAL
+// ============================================
+function getHistory() {
+try {
+const data = localStorage.getItem(HISTORY_KEY);
+return data ? JSON.parse(data) : [];
+} catch (e) {
+return [];
+}
+}
+
+function addToHistory(password) {
+if (!password) return;
+
+let history = getHistory();
+// Añadir al principio y limitar
+history.unshift({
+password: password,
+timestamp: Date.now(),
+mode: currentMode
+});
+history = history.slice(0, MAX_HISTORY);
+
+try {
+localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+renderHistory();
+} catch (e) {
+console.error('Error guardando historial:', e);
+}
+}
+
+function clearHistory() {
+if (confirm('¿Estás seguro de borrar todo el historial de contraseñas?')) {
+localStorage.removeItem(HISTORY_KEY);
+renderHistory();
+showToast('Historial borrado', 'success');
+}
+}
+
+function renderHistory() {
+const list = document.getElementById('historyList');
+const history = getHistory();
+
+if (history.length === 0) {
+list.innerHTML = '<li class="history-empty">No hay contraseñas en el historial</li>';
+return;
+}
+
+list.innerHTML = history.map((item, index) => {
+const date = new Date(item.timestamp);
+const timeStr = date.toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' });
+const masked = item.password.substring(0, 8) + '...';
+return `
+<li class="history-item">
+<span title="${item.mode === 'password' ? 'Contraseña' : 'Frase de paso'}">${masked}</span>
+<div class="history-item-actions">
+<span style="font-size:0.75rem;opacity:0.7">${timeStr}</span>
+<button class="btn btn-ghost" style="padding:4px 8px;font-size:0.8rem" onclick="copyFromHistory(${index})">📋</button>
+</div>
+</li>
+`;
+}).join('');
+}
+
+function copyFromHistory(index) {
+const history = getHistory();
+if (history[index]) {
+navigator.clipboard.writeText(history[index].password).then(() => {
+showToast('Contraseña del historial copiada', 'success');
+}).catch(() => {
+showToast('Error al copiar', 'error');
+});
+}
+}
+
+// ============================================
+// TOAST NOTIFICATIONS
+// ============================================
+function showToast(message, type = 'info') {
+const container = document.getElementById('toastContainer');
+const toast = document.createElement('div');
+toast.className = 'toast tile';
+
+// Colores según tipo
+const colors = {
+success: 'rgba(34,197,94,0.9)',
+error: 'rgba(239,68,68,0.9)',
+warning: 'rgba(234,179,8,0.9)',
+info: 'rgba(59,130,246,0.9)'
+};
+toast.style.backgroundColor = colors[type] || colors.info;
+toast.style.color = '#fff';
+toast.textContent = message;
+
+container.appendChild(toast);
+
+// Eliminar después de la animación
+setTimeout(() => {
+if (toast.parentNode) {
+toast.parentNode.removeChild(toast);
+}
+}, 3000);
+}
+
+// ============================================
+// SINCRONIZACIÓN SLIDER/INPUT
+// ============================================
+function syncLength(value) {
+const numVal = parseInt(value);
+const clamped = Math.min(128, Math.max(4, numVal));
+document.getElementById('lengthSlider').value = clamped;
+document.getElementById('lengthInput').value = clamped;
+}
+
+// ============================================
+// INICIALIZACIÓN
+// ============================================
+document.addEventListener('DOMContentLoaded', () => {
+renderHistory();
+// Generar una contraseña inicial
+generate();
+});
 </script>
 </body>
 </html>

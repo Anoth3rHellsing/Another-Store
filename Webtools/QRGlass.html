@@ -56,21 +56,21 @@
   }
   h2{font-size:15px; font-weight:600; margin-bottom:10px; color:var(--cDeep);}
 
-  /* Tabs as gloss chips */
-  .tabs{display:flex; gap:10px; margin-bottom:14px;}
+  /* Tabs de tipo QR — opacidades del spec: inactive #3DFFFFFF, hover #6BFFFFFF, activo #B8FFFFFF */
+  .tabs{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px;}
   .tab{
-    position:relative; height:36px; padding:0 20px; border-radius:18px; overflow:hidden;
-    border:1px solid rgba(255,255,255,.55); background:rgba(255,255,255,.42);
+    position:relative; height:36px; padding:0 18px; border-radius:9px; overflow:hidden;
+    border:1px solid rgba(255,255,255,.50); background:rgba(255,255,255,.24);
     color:var(--cDeep); font-family:inherit; font-size:13px; cursor:pointer;
-    box-shadow:0 1px 6px rgba(10,58,86,.14); transition:.15s;
+    box-shadow:0 1px 6px rgba(10,58,86,.14); transition:background .15s, border-color .15s;
   }
-  .tab:hover{background:rgba(255,255,255,.6);}
+  .tab:hover{background:rgba(255,255,255,.42);}
   .tab.active{
-    background:linear-gradient(180deg,#8FD9F7 0%,#39A5DC 49%,#1B7FC0 51%,#39B0E4 100%);
-    color:#fff; font-weight:600; box-shadow:var(--shadow), inset 0 0 0 1px rgba(255,255,255,.4);
+    background:rgba(255,255,255,.72); border-color:rgba(255,255,255,.55);
+    font-weight:600;
   }
   .tab.active::before{content:""; position:absolute; left:1px; right:1px; top:1px; height:15px;
-    border-radius:18px 18px 0 0;
+    border-radius:8px 8px 0 0;
     background:linear-gradient(180deg, rgba(255,255,255,.72) 0%, rgba(255,255,255,.22) 48%, transparent 50%);
     pointer-events:none;}
 
@@ -154,6 +154,33 @@
     border:1px solid rgba(255,255,255,.6); border-radius:10px; padding:10px 20px;
     box-shadow:var(--shadow); font-size:13px; opacity:0; pointer-events:none; transition:.25s; z-index:9;}
   .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  /* === ESTILOS ESPECÍFICOS QRGlass === */
+
+  /* Historial de QRs — grid de thumbnails con borde glass y hover glow */
+  .history-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(80px, 1fr));
+    gap:12px; margin-top:12px;
+  }
+  .history-item{
+    aspect-ratio:1; border-radius:10px; overflow:hidden; cursor:pointer;
+    position:relative;
+    border:1px solid rgba(255,255,255,.5);
+    background:rgba(255,255,255,.70);
+    box-shadow:0 1px 6px rgba(10,58,86,.14);
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .history-item:hover{
+    border-color:rgba(31,134,200,.5);
+    box-shadow:0 2px 12px rgba(31,134,200,.30);
+  }
+  .history-item img{width:100%; height:100%; object-fit:contain; background:#fff;}
+  .history-empty{text-align:center; color:var(--Muted); font-size:12.5px; padding:20px;}
+
+  /* Responsive adicional para historial en móvil */
+  @media (max-width:640px){
+    .history-grid{grid-template-columns:repeat(auto-fill, minmax(64px, 1fr)); gap:8px;}
+  }
 </style>
 </head>
 <body>
